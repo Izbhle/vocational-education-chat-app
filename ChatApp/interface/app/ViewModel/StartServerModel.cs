@@ -1,6 +1,7 @@
 ﻿using Network;
 using ReactiveUI;
 using System;
+using ChatApp;
 
 namespace ViewModels
 {
