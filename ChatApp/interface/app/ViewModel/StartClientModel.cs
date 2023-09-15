@@ -10,6 +10,7 @@ namespace ViewModels
     public class StartClientModel : ReactiveObject
     {
         public ChatClient? client;
+
         public StartClientModel()
         {
             // We can listen to any property changes with "WhenAnyValue" and do whatever we want in "Subscribe".
@@ -18,16 +19,19 @@ namespace ViewModels
                 {
                     this.RaisePropertyChanged(nameof(Messages));
                     this.RaisePropertyChanged(nameof(Target));
-                }
-            );
+                });
         }
+
         public void OnClickCommand()
         {
             if (client == null)
             {
                 if (Name != null)
                 {
-                    client = new ChatClient(Name, () => this.RaisePropertyChanged(nameof(Messages)));
+                    client = new ChatClient(
+                        Name,
+                        () => this.RaisePropertyChanged(nameof(Messages))
+                    );
                 }
             }
             else
@@ -38,6 +42,7 @@ namespace ViewModels
                 }
             }
         }
+
         public bool updater;
         public string Messages
         {
@@ -48,12 +53,24 @@ namespace ViewModels
                     return "Client Disconnected";
                 }
                 string result = "";
-                if (Target != null && client.sendMessagesStore.requestTransmissions.ContainsKey(Target))
+                if (
+                    Target != null
+                    && client.sendMessagesStore.requestTransmissions.ContainsKey(Target)
+                )
                 {
-                    client.sendMessagesStore.requestTransmissions[Target]?.ToList().ForEach((transmission) =>
-                    {
-                        result += "from " + transmission.Value.senderId + ": " + transmission.Value.request?.message ?? " ";
-                    });
+                    client.sendMessagesStore.requestTransmissions[Target]
+                        ?.ToList()
+                        .ForEach(
+                            (transmission) =>
+                            {
+                                result +=
+                                    "from "
+                                        + transmission.Value.senderId
+                                        + ": "
+                                        + transmission.Value.request?.message
+                                    ?? " ";
+                            }
+                        );
                 }
                 return result;
             }

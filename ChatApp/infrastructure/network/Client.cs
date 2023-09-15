@@ -258,6 +258,7 @@ namespace Network
             }
             return null;
         }
+
         /// <summary>
         /// Allows initializing the protected Id field if it is null. Does nothing if the id is already set.
         /// </summary>
@@ -266,6 +267,7 @@ namespace Network
         {
             id ??= newId;
         }
+
         /// <summary>
         /// Tries to send data string to the server via stream. Tries to reconnect automatically when the stream is down.
         /// </summary>

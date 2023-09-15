@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-
 namespace Views
 {
     public partial class SetupWindow : Window
@@ -10,6 +9,7 @@ namespace Views
         {
             InitializeComponent();
         }
+
         public void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

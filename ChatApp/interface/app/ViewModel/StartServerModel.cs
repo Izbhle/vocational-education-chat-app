@@ -10,11 +10,11 @@ namespace ViewModels
     public class StartServerModel : ReactiveObject
     {
         public ChatServer? server;
+
         public StartServerModel()
         {
             // We can listen to any property changes with "WhenAnyValue" and do whatever we want in "Subscribe".
-            this.WhenAnyValue(o => o.Name)
-                .Subscribe(o => this.RaisePropertyChanged(nameof(Name)));
+            this.WhenAnyValue(o => o.Name).Subscribe(o => this.RaisePropertyChanged(nameof(Name)));
         }
 
         public void OnClickCommand()
