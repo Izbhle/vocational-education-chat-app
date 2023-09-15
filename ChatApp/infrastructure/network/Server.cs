@@ -4,11 +4,11 @@ using System.Net.Sockets;
 namespace Network
 {
     /// <summary>
-    /// Allows incomming clients to connect. Provies network communcation via Transmissions.
+    /// Allows incoming clients to connect. Provides network communication via Transmissions.
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    class NetworkServer<Req, Res>
+    public class NetworkServer<Req, Res>
     {
         /// <summary>
         /// Reference all clients by clientId. Used to Relay Transmissions.
@@ -28,11 +28,11 @@ namespace Network
         /// <summary>
         ///
         /// </summary>
-        /// <param name="ipAdress">IP Adress of the NetworkServer</param>
+        /// <param name="ipAddress">IP Address of the NetworkServer</param>
         /// <param name="port">Port of the NetworkServer</param>
         /// <param name="transmissionHandlerServerFactory">Factory function used to inject the NetworkServer object into the Handler Bus</param>
         public NetworkServer(
-            string ipAdress,
+            string ipAddress,
             int port,
             Func<
                 NetworkServer<Req, Res>,
@@ -42,14 +42,14 @@ namespace Network
         {
             transmissionHandlerClientFactory = transmissionHandlerServerFactory(this);
             clients = new Dictionary<string, NetworkClient<Req, Res>>();
-            var tcpListener = new TcpListener(IPAddress.Parse(ipAdress), port);
+            var tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
             clientConnectionListener = new ClientConnectionListener(tcpListener, RegisterNewClient);
         }
 
         /// <summary>
-        /// Instantiates and runs a new Networkclient. Used as a callback for the ClientConnectionListener
+        /// Instantiates and runs a new NetworkClient. Used as a callback for the ClientConnectionListener
         /// </summary>
-        /// <param name="client">Incomming connection as a TcpClient that is created by the TcpListener</param>
+        /// <param name="client">Incoming connection as a TcpClient that is created by the TcpListener</param>
         private void RegisterNewClient(TcpClient client)
         {
             var networkClient = new NetworkClient<Req, Res>(
@@ -68,6 +68,7 @@ namespace Network
         public void RegisterClientAction(NetworkClient<Req, Res> client, string id)
         {
             clients[id] = client;
+            client.InitializeId(id);
         }
 
         /// <summary>
@@ -80,7 +81,7 @@ namespace Network
         }
 
         /// <summary>
-        /// /// Starts the TcpListener to start accepting incomming connections
+        /// /// Starts the TcpListener to start accepting incoming connections
         /// </summary>
         public void Start()
         {

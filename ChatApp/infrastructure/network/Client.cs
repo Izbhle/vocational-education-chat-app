@@ -8,7 +8,7 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    class NetworkClient<Req, Res>
+    public class NetworkClient<Req, Res>
     {
         protected string? id;
 
@@ -18,7 +18,7 @@ namespace Network
         private TcpClient tcpClient;
 
         /// <summary>
-        /// All commication is done via this single stream
+        /// All communication is done via this single stream
         /// </summary>
         private NetworkStream? stream;
 
@@ -124,7 +124,7 @@ namespace Network
 
         /// <summary>
         /// Callback to execute on the client when the stream closes in the receiver thread.
-        /// This savely shuts down the stream, in order to cleanly restart it later.
+        /// This safely shuts down the stream, in order to cleanly restart it later.
         /// </summary>
         private void CloseStreamAction()
         {
@@ -258,12 +258,20 @@ namespace Network
             }
             return null;
         }
-
+        /// <summary>
+        /// Allows initializing the protected Id field if it is null. Does nothing if the id is already set.
+        /// </summary>
+        /// <param name="newId">Id to initializes</param>
+        public void InitializeId(string newId)
+        {
+            id ??= newId;
+        }
         /// <summary>
         /// Tries to send data string to the server via stream. Tries to reconnect automatically when the stream is down.
         /// </summary>
         /// <param name="data">presumably json String</param>
         /// <returns><c>true</c> on success, <c>false</c> otherwise</returns>
+
         private bool TrySendData(string data)
         {
             if (stream == null) // Ensure the stream is running

@@ -8,7 +8,7 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    class TransmissionReceiver<Req, Res>
+    public class TransmissionReceiver<Req, Res>
     {
         private readonly NetworkStream stream;
         private readonly Action<Transmission<Req, Res>?> transmissionHandler;
@@ -29,7 +29,7 @@ namespace Network
             TransmissionWrapper<Req, Res> transmission;
 
             int i;
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0) // Read incomming data, when the data is empty or the commection is closed the loop exits
+            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0) // Read incoming data, when the data is empty or the commection is closed the loop exits
             {
                 data = Encoding.UTF8.GetString(bytes, 0, i); // Bytes needs to be converted into UTF8 string
                 transmission = new TransmissionWrapper<Req, Res>(data);

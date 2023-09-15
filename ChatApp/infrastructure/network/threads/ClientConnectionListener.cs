@@ -3,10 +3,10 @@ using System.Net.Sockets;
 namespace Network
 {
     /// <summary>
-    /// Runs listerner for incomming client connections in separate thread.
+    /// Runs listener for incoming client connections in separate thread.
     /// Executes action on connection
     /// </summary>
-    class ClientConnectionListener
+    public class ClientConnectionListener
     {
         private TcpListener listener;
         private Thread thread;
@@ -17,7 +17,7 @@ namespace Network
         private Action<TcpClient> action;
 
         /// <summary>
-        /// Used to initate delegate for the separate Thread,
+        /// Used to initiate delegate for the separate Thread,
         /// </summary>
         private void Listen()
         {
