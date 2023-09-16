@@ -10,14 +10,6 @@ public class NetworkIntegrationTests
     private readonly string disconnectTransmission = "disconnect";
     private readonly string ip = "127.0.0.1";
 
-    private int _nextPort = 1234;
-
-    private int getNextPort()
-    {
-        _nextPort += 1;
-        return _nextPort;
-    }
-
     class TestHandlers
     {
         public NetworkServer<string, string>? serverHandlerServer;
@@ -58,7 +50,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerReceivesRegisterRequest()
     {
-        int port = getNextPort();
+        int port = 1234;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -82,7 +74,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerCanRegisterClient()
     {
-        int port = getNextPort();
+        int port = 1235;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -106,7 +98,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ClientCanSendMessage()
     {
-        int port = getNextPort();
+        int port = 1236;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -135,7 +127,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ClientCanReceiveMessage()
     {
-        int port = getNextPort();
+        int port = 1237;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -165,7 +157,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerReceivesDisconnectRequest()
     {
-        int port = getNextPort();
+        int port = 1238;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
