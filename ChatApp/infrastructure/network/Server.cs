@@ -8,12 +8,12 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    public class NetworkServer<Req, Res>
+    public class NetworkServer<Req, Res> : INetworkServer<Req, Res>
     {
         /// <summary>
         /// Reference all clients by clientId. Used to Relay Transmissions.
         /// </summary>
-        public readonly Dictionary<string, NetworkClient<Req, Res>> clients;
+        public Dictionary<string, INetworkClient<Req, Res>> clients { get; }
         private readonly ClientConnectionListener clientConnectionListener;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Network
         /// </summary>
         /// <returns>Transmission handler provided by the Application</returns>
         private readonly Func<
-            NetworkClient<Req, Res>,
+            INetworkClient<Req, Res>,
             Action<Transmission<Req, Res>?>
         > transmissionHandlerClientFactory;
 
@@ -36,14 +36,29 @@ namespace Network
             int port,
             Func<
                 NetworkServer<Req, Res>,
-                Func<NetworkClient<Req, Res>, Action<Transmission<Req, Res>?>>
+                Func<INetworkClient<Req, Res>, Action<Transmission<Req, Res>?>>
             > transmissionHandlerServerFactory
         )
         {
             transmissionHandlerClientFactory = transmissionHandlerServerFactory(this);
-            clients = new Dictionary<string, NetworkClient<Req, Res>>();
+            clients = new Dictionary<string, INetworkClient<Req, Res>>();
             var tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
             clientConnectionListener = new ClientConnectionListener(tcpListener, RegisterNewClient);
+        }
+
+        /// <summary>
+        /// Method that tries to send a transmission to a connected client
+        /// </summary>
+        /// <param name="targetId">Id of target client</param>
+        /// <param name="transmission">Transmission to be sent</param>
+        public bool TrySendTransmission(string? targetId, Transmission<Req, Res> transmission)
+        {
+            if (targetId != null && clients.ContainsKey(targetId))
+            {
+                clients[targetId].SendTransmission(transmission);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -65,7 +80,7 @@ namespace Network
         /// </summary>
         /// <param name="client">NetworkClient</param>
         /// <param name="id">Id of the NetworkClient as non null</param>
-        public void RegisterClientAction(NetworkClient<Req, Res> client, string id)
+        public void RegisterClientAction(INetworkClient<Req, Res> client, string id)
         {
             clients[id] = client;
             client.Id = id;
@@ -75,9 +90,12 @@ namespace Network
         /// Provides means to manually disconnect a client
         /// </summary>
         /// <param name="id"></param>
-        public void DisconnectClientAction(string id)
+        public void DisconnectClientAction(string? id)
         {
-            clients.Remove(id);
+            if (id != null && clients.ContainsKey(id))
+            {
+                clients.Remove(id);
+            }
         }
 
         /// <summary>

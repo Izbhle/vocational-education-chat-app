@@ -12,14 +12,14 @@ public class NetworkIntegrationTests
 
     class TestHandlers
     {
-        public NetworkServer<string, string>? serverHandlerServer;
-        public NetworkClient<string, string>? serverHandlerClient;
+        public INetworkServer<string, string>? serverHandlerServer;
+        public INetworkClient<string, string>? serverHandlerClient;
         public Transmission<string, string>? serverHandlerTransmission;
 
         public Func<
-            NetworkClient<string, string>,
+            INetworkClient<string, string>,
             Action<Transmission<string, string>?>
-        > ServerHandler(NetworkServer<string, string> server)
+        > ServerHandler(INetworkServer<string, string> server)
         {
             serverHandlerServer = server;
             return (c) =>
@@ -32,11 +32,11 @@ public class NetworkIntegrationTests
             };
         }
 
-        public NetworkClient<string, string>? clientHandlerClient;
+        public INetworkClient<string, string>? clientHandlerClient;
         public Transmission<string, string>? clientHandlerTransmission;
 
         public Action<Transmission<string, string>?> ClientHandler(
-            NetworkClient<string, string> client
+            INetworkClient<string, string> client
         )
         {
             clientHandlerClient = client;

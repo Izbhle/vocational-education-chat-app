@@ -35,11 +35,13 @@ namespace ViewModels
             }
             if (IsLaunchServer)
             {
-                server = new ChatServer();
+                server = new ChatServer(IpAddress, 1234);
             }
             Thread.Sleep(1000);
             client = new ChatClient(
                 Name,
+                IpAddress,
+                1234,
                 () =>
                 {
                     this.RaisePropertyChanged(nameof(Messages));
