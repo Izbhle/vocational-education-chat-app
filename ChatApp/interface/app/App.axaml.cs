@@ -17,7 +17,7 @@ namespace ChatApp
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new SetupWindow { DataContext = new SetupWindowViewModel(), };
+                desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel(), };
             }
 
             base.OnFrameworkInitializationCompleted();
