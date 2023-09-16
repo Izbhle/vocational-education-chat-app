@@ -10,6 +10,14 @@ public class NetworkIntegrationTests
     private readonly string disconnectTransmission = "disconnect";
     private readonly string ip = "127.0.0.1";
 
+    private int _nextPort = 1234;
+
+    private int getNextPort()
+    {
+        _nextPort += 1;
+        return _nextPort;
+    }
+
     class TestHandlers
     {
         public NetworkServer<string, string>? serverHandlerServer;
@@ -50,14 +58,15 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerReceivesRegisterRequest()
     {
+        int port = getNextPort();
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, 1234, (s) => handlers.ServerHandler(s));
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
         Thread.Sleep(200);
         var client = new NetworkClient<string, string>(
             id,
             ip,
-            1234,
+            port,
             (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
@@ -73,14 +82,15 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerCanRegisterClient()
     {
+        int port = getNextPort();
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, 1235, (s) => handlers.ServerHandler(s));
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
         Thread.Sleep(200);
         var client = new NetworkClient<string, string>(
             id,
             ip,
-            1235,
+            port,
             (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
@@ -96,14 +106,15 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ClientCanSendMessage()
     {
+        int port = getNextPort();
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, 1236, (s) => handlers.ServerHandler(s));
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
         Thread.Sleep(200);
         var client = new NetworkClient<string, string>(
             id,
             ip,
-            1236,
+            port,
             (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
@@ -124,14 +135,15 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ClientCanReceiveMessage()
     {
+        int port = getNextPort();
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, 1237, (s) => handlers.ServerHandler(s));
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
         Thread.Sleep(200);
         var client = new NetworkClient<string, string>(
             id,
             ip,
-            1237,
+            port,
             (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
@@ -153,14 +165,15 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerReceivesDisconnectRequest()
     {
+        int port = getNextPort();
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, 1237, (s) => handlers.ServerHandler(s));
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
         Thread.Sleep(200);
         var client = new NetworkClient<string, string>(
             id,
             ip,
-            1237,
+            port,
             (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
