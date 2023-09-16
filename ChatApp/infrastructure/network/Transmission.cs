@@ -9,7 +9,6 @@ namespace Network
     {
         request,
         response,
-        both
     }
 
     /// <summary>

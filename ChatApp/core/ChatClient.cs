@@ -10,7 +10,7 @@ namespace ChatApp
 
         private readonly Action callback;
 
-        public ChatClient(string id, Action updateCallback)
+        public ChatClient(string id, string ipAddress, int port, Action updateCallback)
         {
             callback = updateCallback;
             var registerRequest = new ChatRequest
@@ -21,12 +21,11 @@ namespace ChatApp
             var disconnectRequest = new ChatRequest
             {
                 requestType = ChatRequestType.DisconnectClient,
-                message = id
             };
             client = new NetworkClient<ChatRequest, ChatResponse>(
                 id,
-                "127.0.0.1",
-                1234,
+                ipAddress,
+                port,
                 TransmissionHandlerWrapper,
                 registerRequest,
                 disconnectRequest

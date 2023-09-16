@@ -8,7 +8,7 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    public class NetworkClient<Req, Res>
+    public class NetworkClient<Req, Res>: INetworkClient<Req, Res>
     {
         private string? _Id;
 
