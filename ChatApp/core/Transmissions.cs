@@ -3,6 +3,7 @@ namespace ChatApp
     public enum ChatRequestType
     {
         RegisterClient,
+        DisconnectClient,
         SendMessage
     }
 

@@ -5,9 +5,10 @@ namespace Network;
 [TestClass]
 public class NetworkIntegrationTests
 {
-    private string id = "test";
-    private string registerTransmission = "register";
-    private string ip = "127.0.0.1";
+    private readonly string id = "test";
+    private readonly string registerTransmission = "register";
+    private readonly string disconnectTransmission = "disconnect";
+    private readonly string ip = "127.0.0.1";
 
     class TestHandlers
     {
@@ -58,7 +59,8 @@ public class NetworkIntegrationTests
             ip,
             1234,
             (c) => handlers.ClientHandler(c),
-            registerTransmission
+            registerTransmission,
+            disconnectTransmission
         );
         client.Start();
         Thread.Sleep(200);
@@ -80,7 +82,8 @@ public class NetworkIntegrationTests
             ip,
             1235,
             (c) => handlers.ClientHandler(c),
-            registerTransmission
+            registerTransmission,
+            disconnectTransmission
         );
         client.Start();
         Thread.Sleep(200);
@@ -102,7 +105,8 @@ public class NetworkIntegrationTests
             ip,
             1236,
             (c) => handlers.ClientHandler(c),
-            registerTransmission
+            registerTransmission,
+            disconnectTransmission
         );
         client.Start();
         Thread.Sleep(200);
@@ -129,7 +133,8 @@ public class NetworkIntegrationTests
             ip,
             1237,
             (c) => handlers.ClientHandler(c),
-            registerTransmission
+            registerTransmission,
+            disconnectTransmission
         );
         client.Start();
         Thread.Sleep(200);
@@ -143,5 +148,34 @@ public class NetworkIntegrationTests
 
         Assert.AreEqual(client, handlers.clientHandlerClient);
         Assert.AreEqual(message, handlers.clientHandlerTransmission?.request);
+    }
+
+    [TestMethod]
+    public void ServerReceivesDisconnectRequest()
+    {
+        var handlers = new TestHandlers();
+        var server = new NetworkServer<string, string>(ip, 1237, (s) => handlers.ServerHandler(s));
+        server.Start();
+        Thread.Sleep(200);
+        var client = new NetworkClient<string, string>(
+            id,
+            ip,
+            1237,
+            (c) => handlers.ClientHandler(c),
+            registerTransmission,
+            disconnectTransmission
+        );
+        client.Start();
+        Thread.Sleep(200);
+        Assert.IsNotNull(handlers.serverHandlerClient);
+        server.RegisterClientAction(handlers.serverHandlerClient, id);
+
+        Assert.IsTrue(server.clients.ContainsKey(id));
+        client.Dispose();
+        Thread.Sleep(200);
+
+        Assert.AreEqual(server, handlers.serverHandlerServer);
+        Assert.IsNotNull(handlers.serverHandlerClient);
+        Assert.AreEqual(disconnectTransmission, handlers.serverHandlerTransmission?.request);
     }
 }

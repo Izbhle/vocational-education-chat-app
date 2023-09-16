@@ -18,20 +18,22 @@ namespace ChatApp
                 requestType = ChatRequestType.RegisterClient,
                 message = id
             };
-
+            var disconnectRequest = new ChatRequest
+            {
+                requestType = ChatRequestType.DisconnectClient,
+                message = id
+            };
             client = new NetworkClient<ChatRequest, ChatResponse>(
                 id,
                 "127.0.0.1",
                 1234,
                 TransmissionHandlerWrapper,
-                registerRequest
+                registerRequest,
+                disconnectRequest
             );
             receivedMessagesStore = new ChatRequestStore();
             sendMessagesStore = new ChatRequestStore();
             client.Start();
-            client.SendServerRequest(
-                new ChatRequest { requestType = ChatRequestType.RegisterClient, message = id }
-            );
         }
 
         public void SendMessage(string target, string message)

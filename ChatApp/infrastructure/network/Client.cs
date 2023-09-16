@@ -10,7 +10,16 @@ namespace Network
     /// <typeparam name="Res">Response</typeparam>
     public class NetworkClient<Req, Res>
     {
-        protected string? id;
+        private string? _Id;
+
+        /// <summary>
+        /// Argument for Id can only be assigned once
+        /// </summary>
+        public string? Id
+        {
+            get { return _Id; }
+            set { _Id ??= value; }
+        }
 
         /// <summary>
         /// Serves as the network connection
@@ -29,6 +38,11 @@ namespace Network
         /// This is the initial request to be send to the server to register this client, used by client applications
         /// </summary>
         private readonly Req? registerRequest;
+
+        /// <summary>
+        /// This request will be sent uppon disconnect
+        /// </summary>
+        private readonly Req? disconnectRequest;
 
         /// <summary>
         /// Callback to execute on the server when a stream closes
@@ -53,14 +67,16 @@ namespace Network
                 NetworkClient<Req, Res>,
                 Action<Transmission<Req, Res>?>
             > transmissionHandlerFactory,
-            Req serverRegisterRequest
+            Req serverRegisterRequest,
+            Req serverDisconnectRequest
         )
         {
-            id = initialId;
+            Id = initialId;
             ip = ipAddress;
             port = networkPort;
             tcpClient = new TcpClient(ip, (int)port); // Start the network connection to the server
             registerRequest = serverRegisterRequest;
+            disconnectRequest = serverDisconnectRequest;
             transmissionHandler = transmissionHandlerFactory(this);
         }
 
@@ -134,9 +150,9 @@ namespace Network
                 stream.Dispose();
                 stream = null;
             }
-            if (id != null)
+            if (Id != null)
             {
-                closeStreamServerAction?.Invoke(id); // Also execute server callback when it exists.
+                closeStreamServerAction?.Invoke(Id); // Also execute server callback when it exists.
             }
         }
 
@@ -149,16 +165,25 @@ namespace Network
         }
 
         /// <summary>
-        /// Stops the stream and the receiver thread.
+        /// Safely closes all connections. This also puts tcpClient into an unusuable state, only use this when you mean to dispose the client
         /// </summary>
-        public void Stop()
+        public void Dispose()
         {
-            if (stream == null)
+            if (tcpClient.Connected)
             {
+                if (stream == null)
+                {
+                    tcpClient.Dispose();
+                    return;
+                }
+                if (disconnectRequest != null)
+                    SendServerRequest(disconnectRequest);
+                stream.Dispose();
+                stream = null;
+                tcpClient.Dispose();
                 return;
             }
-            stream.Dispose();
-            stream = null;
+            tcpClient.Dispose();
         }
 
         /// <summary>
@@ -179,7 +204,7 @@ namespace Network
         /// <returns><c>Transmission</c> if success, <c>null</c> otherwise</returns>
         public Transmission<Req, Res>? SendClientRequest(string receiverId, Req request)
         {
-            if (id == null)
+            if (Id == null)
             {
                 return null;
             }
@@ -189,7 +214,7 @@ namespace Network
                     transmissionType = TransmissionType.request,
                     targetType = TargetType.client,
                     receiverId = receiverId,
-                    senderId = id,
+                    senderId = Id,
                     request = request
                 }
             );
@@ -207,7 +232,7 @@ namespace Network
         /// <returns><c>Transmission</c> if success, <c>null</c> otherwise</returns>
         public Transmission<Req, Res>? SendServerRequest(Req request)
         {
-            if (id == null)
+            if (Id == null)
             {
                 return null;
             }
@@ -216,7 +241,7 @@ namespace Network
                 {
                     transmissionType = TransmissionType.request,
                     targetType = TargetType.server,
-                    senderId = id,
+                    senderId = Id,
                     request = request
                 }
             );
@@ -238,7 +263,7 @@ namespace Network
             Res response
         )
         {
-            if (id == null)
+            if (Id == null)
             {
                 return null;
             }
@@ -248,7 +273,7 @@ namespace Network
                     transmissionType = TransmissionType.response,
                     targetType = oldTransmission.targetType,
                     senderId = oldTransmission.senderId,
-                    receiverId = id,
+                    receiverId = Id,
                     response = response
                 }
             );
@@ -257,15 +282,6 @@ namespace Network
                 return transmission.data;
             }
             return null;
-        }
-
-        /// <summary>
-        /// Allows initializing the protected Id field if it is null. Does nothing if the id is already set.
-        /// </summary>
-        /// <param name="newId">Id to initializes</param>
-        public void InitializeId(string newId)
-        {
-            id ??= newId;
         }
 
         /// <summary>

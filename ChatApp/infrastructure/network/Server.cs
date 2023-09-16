@@ -68,7 +68,7 @@ namespace Network
         public void RegisterClientAction(NetworkClient<Req, Res> client, string id)
         {
             clients[id] = client;
-            client.InitializeId(id);
+            client.Id = id;
         }
 
         /// <summary>
@@ -86,6 +86,14 @@ namespace Network
         public void Start()
         {
             clientConnectionListener.StartListening();
+        }
+
+        /// <summary>
+        /// Disposes the Server, safely disconnecting all clients.
+        /// </summary>
+        public void Dispose()
+        {
+            clients.ToList().ForEach(c => c.Value.Dispose());
         }
     }
 }
