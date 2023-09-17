@@ -3,7 +3,7 @@ using Network;
 namespace ChatApp;
 
 [TestClass]
-public class ChatServerUnitTests
+public class ChatServerHandlerUnitTests
 {
     private readonly Mock<INetworkServer<ChatRequest, ChatResponse>> serverMock = new();
     private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> clientMock = new();

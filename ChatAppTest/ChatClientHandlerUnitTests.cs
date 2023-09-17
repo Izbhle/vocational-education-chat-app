@@ -3,7 +3,7 @@ using Network;
 namespace ChatApp;
 
 [TestClass]
-public class ChatClientUnitTests
+public class ChatClientHandlerUnitTests
 {
     private readonly Mock<INetworkServer<ChatRequest, ChatResponse>> serverMock = new();
     private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> clientMock = new();
@@ -12,7 +12,7 @@ public class ChatClientUnitTests
     private readonly Mock<IChatRequestStore> sendMessagesStoreMock = new();
     private readonly Mock<Action> callbackMock = new();
 
-    public ChatClientUnitTests()
+    public ChatClientHandlerUnitTests()
     {
         chatClientMock
             .SetupGet(c => c.receivedMessagesStore)

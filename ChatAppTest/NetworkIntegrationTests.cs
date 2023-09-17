@@ -1,5 +1,3 @@
-using ReactiveUI;
-
 namespace Network;
 
 [TestClass]
@@ -10,7 +8,7 @@ public class NetworkIntegrationTests
     private readonly string disconnectTransmission = "disconnect";
     private readonly string ip = "127.0.0.1";
 
-    class TestHandlers
+    private class TestHandlers
     {
         public INetworkServer<string, string>? serverHandlerServer;
         public INetworkClient<string, string>? serverHandlerClient;
