@@ -2,13 +2,13 @@ using Network;
 
 namespace ChatApp
 {
-    public class ChatClient
+    public class ChatClient : IChatClient
     {
         private readonly NetworkClient<ChatRequest, ChatResponse> client;
-        public readonly ChatRequestStore receivedMessagesStore;
-        public readonly ChatRequestStore sendMessagesStore;
+        public IChatRequestStore receivedMessagesStore { get; }
+        public IChatRequestStore sendMessagesStore { get; }
 
-        private readonly Action callback;
+        public Action callback { get; }
 
         public ChatClient(string id, string ipAddress, int port, Action updateCallback)
         {
@@ -47,53 +47,13 @@ namespace ChatApp
             sendMessagesStore.Store(transmission);
         }
 
-        private void TransmissionHandler(
-            NetworkClient<ChatRequest, ChatResponse> client,
-            Transmission<ChatRequest, ChatResponse>? transmission
-        )
-        {
-            if (transmission == null)
-            {
-                return;
-            }
-            switch (transmission.transmissionType)
-            {
-                case TransmissionType.request:
-                    if (transmission.request == null)
-                    {
-                        return;
-                    }
-                    switch (transmission.request.requestType)
-                    {
-                        case ChatRequestType.SendMessage:
-                            receivedMessagesStore.Store(transmission);
-                            client.SendResponse(transmission, new ChatResponse { });
-                            break;
-                    }
-                    break;
-                case TransmissionType.response:
-                    if (transmission.response == null)
-                    {
-                        return;
-                    }
-                    switch (transmission.response.requestType)
-                    {
-                        case ChatRequestType.SendMessage:
-                            sendMessagesStore.Store(transmission);
-                            break;
-                    }
-                    break;
-            }
-            callback();
-        }
-
         private Action<Transmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(
             NetworkClient<ChatRequest, ChatResponse> client
         )
         {
             return (transmission) =>
             {
-                TransmissionHandler(client, transmission);
+                ChatClientHandler.TransmissionHandler(this, client, transmission);
             };
         }
     }

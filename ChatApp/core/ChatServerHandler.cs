@@ -11,6 +11,7 @@ namespace ChatApp
             new() { error = ChatResponseError.OperationNotSupported };
 
         public static void TransmissionHandler(
+            IChatServer chatServer,
             INetworkServer<ChatRequest, ChatResponse> server,
             INetworkClient<ChatRequest, ChatResponse> client,
             Transmission<ChatRequest, ChatResponse>? transmission
