@@ -1,3 +1,5 @@
+using System.Text.Json;
+using DynamicData;
 using Network;
 
 namespace ChatApp
@@ -23,7 +25,7 @@ namespace ChatApp
                     }
                     switch (transmission.request.requestType)
                     {
-                        case ChatRequestType.SendMessage:
+                        case ChatRequestType.Message:
                             chatClient.receivedMessagesStore.Store(transmission);
                             client.SendResponse(transmission, new ChatResponse { });
                             break;
@@ -36,8 +38,22 @@ namespace ChatApp
                     }
                     switch (transmission.response.requestType)
                     {
-                        case ChatRequestType.SendMessage:
+                        case ChatRequestType.Message:
                             chatClient.sendMessagesStore.Store(transmission);
+                            break;
+                        case ChatRequestType.ClientList:
+                            if (transmission.response.message == null)
+                                return;
+                            try
+                            {
+                                var clients = JsonSerializer.Deserialize<List<string>>(
+                                    transmission.response.message
+                                );
+                                if (clients == null)
+                                    return;
+                                chatClient.availableClients = clients;
+                            }
+                            catch (JsonException) { }
                             break;
                     }
                     break;

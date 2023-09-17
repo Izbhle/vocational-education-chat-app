@@ -47,6 +47,15 @@ namespace Network
         }
 
         /// <summary>
+        /// Use this to get all valid clients.
+        /// </summary>
+        /// <returns>A list with the ids of all connected clients</returns>
+        public List<string> GetListOfClientIds()
+        {
+            return clients.Keys.ToList();
+        }
+
+        /// <summary>
         /// Method that tries to send a transmission to a connected client
         /// </summary>
         /// <param name="targetId">Id of target client</param>
