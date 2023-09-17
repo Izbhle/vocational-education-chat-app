@@ -5,8 +5,7 @@ namespace ChatApp
     public class ChatClient : IChatClient
     {
         private readonly NetworkClient<ChatRequest, ChatResponse> client;
-        public IChatRequestStore receivedMessagesStore { get; }
-        public IChatRequestStore sendMessagesStore { get; }
+        public IChatRequestStore messagesStore { get; }
         public List<string> availableClients { get; set; }
 
         public Action callback { get; }
@@ -32,8 +31,7 @@ namespace ChatApp
                 registerRequest,
                 disconnectRequest
             );
-            receivedMessagesStore = new ChatRequestStore();
-            sendMessagesStore = new ChatRequestStore();
+            messagesStore = new ChatRequestStore(id);
             client.Start();
         }
 
@@ -46,7 +44,13 @@ namespace ChatApp
                 message = message
             };
             var transmission = client.SendClientRequest(target, request);
-            sendMessagesStore.Store(transmission);
+            messagesStore.Store(transmission);
+        }
+
+        public void RequestClientList()
+        {
+            var request = new ChatRequest { requestType = ChatRequestType.ClientList, };
+            client.SendServerRequest(request);
         }
 
         private Action<Transmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(

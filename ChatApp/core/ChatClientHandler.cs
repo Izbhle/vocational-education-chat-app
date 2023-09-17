@@ -26,7 +26,7 @@ namespace ChatApp
                     switch (transmission.request.requestType)
                     {
                         case ChatRequestType.Message:
-                            chatClient.receivedMessagesStore.Store(transmission);
+                            chatClient.messagesStore.Store(transmission);
                             client.SendResponse(transmission, new ChatResponse { });
                             break;
                     }
@@ -39,7 +39,7 @@ namespace ChatApp
                     switch (transmission.response.requestType)
                     {
                         case ChatRequestType.Message:
-                            chatClient.sendMessagesStore.Store(transmission);
+                            chatClient.messagesStore.Store(transmission);
                             break;
                         case ChatRequestType.ClientList:
                             if (transmission.response.message == null)

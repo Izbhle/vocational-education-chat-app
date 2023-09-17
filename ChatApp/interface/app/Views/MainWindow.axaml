@@ -35,8 +35,14 @@
 			</DockPanel>
 			<DockPanel>
 				<StackPanel>
-					<TextBox Text="{Binding Target}"/>
-					<Button>Refresh</Button>
+					<ListBox ItemsSource="{Binding AvailableClients}" SelectedItem="{Binding Target}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<Button Command="{Binding RefreshClientList}">Refresh</Button>
 				</StackPanel>
 				<StackPanel>
 					<TextBlock Text="{Binding Messages}"></TextBlock>

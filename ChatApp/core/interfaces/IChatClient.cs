@@ -4,11 +4,11 @@ namespace ChatApp
 {
     public interface IChatClient
     {
-        public IChatRequestStore receivedMessagesStore { get; }
-        public IChatRequestStore sendMessagesStore { get; }
+        public IChatRequestStore messagesStore { get; }
         public Action callback { get; }
         public List<string> availableClients { get; set; }
 
         public abstract void SendMessage(string target, string message);
+        public abstract void RequestClientList();
     }
 }

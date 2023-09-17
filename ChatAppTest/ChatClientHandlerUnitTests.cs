@@ -7,16 +7,12 @@ public class ChatClientHandlerUnitTests
 {
     private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> clientMock = new();
     private readonly Mock<IChatClient> chatClientMock = new();
-    private readonly Mock<IChatRequestStore> receivedMessagesStoreMock = new();
-    private readonly Mock<IChatRequestStore> sendMessagesStoreMock = new();
+    private readonly Mock<IChatRequestStore> messagesStoreMock = new();
     private readonly Mock<Action> callbackMock = new();
 
     public ChatClientHandlerUnitTests()
     {
-        chatClientMock
-            .SetupGet(c => c.receivedMessagesStore)
-            .Returns(receivedMessagesStoreMock.Object);
-        chatClientMock.SetupGet(c => c.sendMessagesStore).Returns(sendMessagesStoreMock.Object);
+        chatClientMock.SetupGet(c => c.messagesStore).Returns(messagesStoreMock.Object);
         chatClientMock.SetupGet(c => c.callback).Returns(callbackMock.Object);
         chatClientMock.SetupProperty(c => c.availableClients);
     }
@@ -46,11 +42,7 @@ public class ChatClientHandlerUnitTests
             clientMock.Object,
             transmission
         );
-        receivedMessagesStoreMock.Verify(s => s.Store(transmission), Times.Exactly(1));
-        sendMessagesStoreMock.Verify(
-            s => s.Store(It.IsAny<Transmission<ChatRequest, ChatResponse>>()),
-            Times.Never()
-        );
+        messagesStoreMock.Verify(s => s.Store(transmission), Times.Exactly(1));
         callbackMock.Verify(c => c());
     }
 
@@ -77,11 +69,7 @@ public class ChatClientHandlerUnitTests
             clientMock.Object,
             transmission
         );
-        sendMessagesStoreMock.Verify(s => s.Store(transmission), Times.Exactly(1));
-        receivedMessagesStoreMock.Verify(
-            s => s.Store(It.IsAny<Transmission<ChatRequest, ChatResponse>>()),
-            Times.Never()
-        );
+        messagesStoreMock.Verify(s => s.Store(transmission), Times.Exactly(1));
         callbackMock.Verify(c => c());
     }
 

@@ -4,13 +4,16 @@ namespace ChatApp
 {
     public class ChatRequestStore : IChatRequestStore
     {
+        private readonly string storeId;
+
         public Dictionary<
             string,
             Dictionary<DateTime, Transmission<ChatRequest, ChatResponse>>
         > requestTransmissions { get; }
 
-        public ChatRequestStore()
+        public ChatRequestStore(string id)
         {
+            storeId = id;
             requestTransmissions =
                 new Dictionary<
                     string,
@@ -21,16 +24,25 @@ namespace ChatApp
         private Dictionary<
             DateTime,
             Transmission<ChatRequest, ChatResponse>
-        > getReceiverTransmissionDict(string receiverId)
+        > GetTargetTransmissionDict(string receiverId, string senderId)
         {
-            if (!requestTransmissions.ContainsKey(receiverId))
+            string targetId;
+            if (senderId == storeId)
+            {
+                targetId = receiverId;
+            }
+            else
+            {
+                targetId = senderId;
+            }
+            if (!requestTransmissions.ContainsKey(targetId))
             {
                 requestTransmissions.Add(
-                    receiverId,
+                    targetId,
                     new Dictionary<DateTime, Transmission<ChatRequest, ChatResponse>>()
                 );
             }
-            return requestTransmissions[receiverId];
+            return requestTransmissions[targetId];
         }
 
         public void Store(Transmission<ChatRequest, ChatResponse>? Transmission)
@@ -50,22 +62,26 @@ namespace ChatApp
                     {
                         return;
                     }
-                    getReceiverTransmissionDict(Transmission.senderId)
-                        .Add((DateTime)Transmission.request?.requestTimeId!, Transmission);
+                    GetTargetTransmissionDict(Transmission.receiverId, Transmission.senderId)
+                        .TryAdd((DateTime)Transmission.request?.requestTimeId!, Transmission);
                     break;
                 case TransmissionType.response:
                     if (
                         Transmission.request?.requestTimeId == null
-                        || !getReceiverTransmissionDict(Transmission.receiverId)
+                        || !GetTargetTransmissionDict(
+                                Transmission.receiverId,
+                                Transmission.senderId
+                            )
                             .ContainsKey(Transmission.request.requestTimeId)
-                        || getReceiverTransmissionDict(Transmission.receiverId)[
-                            Transmission.request.requestTimeId
-                        ] == null
+                        || GetTargetTransmissionDict(
+                            Transmission.receiverId,
+                            Transmission.senderId
+                        )[Transmission.request.requestTimeId] == null
                     )
                     {
                         return;
                     }
-                    getReceiverTransmissionDict(Transmission.receiverId)[
+                    GetTargetTransmissionDict(Transmission.receiverId, Transmission.senderId)[
                         Transmission.request.requestTimeId
                     ].response = Transmission.response;
                     break;
