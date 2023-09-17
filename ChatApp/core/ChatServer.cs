@@ -2,7 +2,7 @@ using Network;
 
 namespace ChatApp
 {
-    public class ChatServer
+    public class ChatServer : IChatServer
     {
         private INetworkServer<ChatRequest, ChatResponse> server;
 
@@ -25,7 +25,7 @@ namespace ChatApp
             {
                 return (transmission) =>
                 {
-                    ChatServerHandler.TransmissionHandler(server, client, transmission);
+                    ChatServerHandler.TransmissionHandler(this, server, client, transmission);
                 };
             };
         }

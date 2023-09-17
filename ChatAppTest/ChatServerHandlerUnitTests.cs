@@ -7,6 +7,7 @@ public class ChatServerUnitTests
 {
     private readonly Mock<INetworkServer<ChatRequest, ChatResponse>> serverMock = new();
     private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> clientMock = new();
+    private readonly Mock<IChatServer> chatServerMock = new();
 
     [TestMethod]
     public void RegistersClient()
@@ -23,7 +24,12 @@ public class ChatServerUnitTests
             }
         };
 
-        ChatServerHandler.TransmissionHandler(serverMock.Object, clientMock.Object, transmission);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
         serverMock.Verify(
             s => s.RegisterClientAction(clientMock.Object, clientName),
             Times.Exactly(1)
@@ -42,7 +48,12 @@ public class ChatServerUnitTests
             request = new ChatRequest { requestType = ChatRequestType.DisconnectClient, }
         };
 
-        ChatServerHandler.TransmissionHandler(serverMock.Object, clientMock.Object, transmission);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
         serverMock.Verify(s => s.DisconnectClientAction(clientName), Times.Exactly(1));
         clientMock.Verify(c => c.Dispose(), Times.Exactly(1));
     }
@@ -67,7 +78,12 @@ public class ChatServerUnitTests
             }
         };
 
-        ChatServerHandler.TransmissionHandler(serverMock.Object, clientMock.Object, transmission);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
         serverMock.Verify(s => s.TrySendTransmission(targetName, transmission), Times.Exactly(1));
     }
 
@@ -92,7 +108,12 @@ public class ChatServerUnitTests
         };
         serverMock.Setup(s => s.TrySendTransmission(targetName, transmission)).Returns(false);
 
-        ChatServerHandler.TransmissionHandler(serverMock.Object, clientMock.Object, transmission);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
         clientMock.Verify(
             c => c.SendResponse(transmission, ChatServerHandler.malformedRequestResponse),
             Times.Exactly(1)
