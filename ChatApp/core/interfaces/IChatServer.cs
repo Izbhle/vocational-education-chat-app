@@ -1,4 +1,7 @@
 namespace ChatApp
 {
-    public interface IChatServer { }
+    public interface IChatServer
+    {
+        public abstract ChatResponse CreateListOfClientsResponse();
+    }
 }

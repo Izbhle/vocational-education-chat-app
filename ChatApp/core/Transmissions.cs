@@ -4,7 +4,8 @@ namespace ChatApp
     {
         RegisterClient,
         DisconnectClient,
-        SendMessage
+        ClientList,
+        Message
     }
 
     public enum ChatResponseError

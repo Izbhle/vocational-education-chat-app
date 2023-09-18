@@ -16,7 +16,7 @@ namespace Network
         /// <summary>
         /// Action to execute when the stream closes
         /// </summary>
-        private readonly Action closeStreamAction;
+        private readonly Action? closeStreamAction;
         private readonly Thread thread;
 
         /// <summary>
@@ -29,13 +29,17 @@ namespace Network
             TransmissionWrapper<Req, Res> transmission;
 
             int i;
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0) // Read incoming data, when the data is empty or the commection is closed the loop exits
+            try
             {
-                data = Encoding.UTF8.GetString(bytes, 0, i); // Bytes needs to be converted into UTF8 string
-                transmission = new TransmissionWrapper<Req, Res>(data);
-                transmissionHandler(transmission.data);
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0) // Read incoming data, when the data is empty or the commection is closed the loop exits
+                {
+                    data = Encoding.UTF8.GetString(bytes, 0, i); // Bytes needs to be converted into UTF8 string
+                    transmission = new TransmissionWrapper<Req, Res>(data);
+                    transmissionHandler(transmission.data);
+                }
             }
-            closeStreamAction();
+            catch (IOException) { }
+            closeStreamAction?.Invoke();
         }
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace Network
         public TransmissionReceiver(
             NetworkStream tcpStream,
             Action<Transmission<Req, Res>?> transmissionAction,
-            Action closeAction
+            Action? closeAction
         )
         {
             stream = tcpStream;

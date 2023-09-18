@@ -72,7 +72,7 @@ public class ChatServerHandlerUnitTests
             receiverId = targetName,
             request = new ChatRequest
             {
-                requestType = ChatRequestType.SendMessage,
+                requestType = ChatRequestType.Message,
                 message = message,
                 requestTimeId = DateTime.UtcNow
             }
@@ -101,7 +101,7 @@ public class ChatServerHandlerUnitTests
             receiverId = targetName,
             request = new ChatRequest
             {
-                requestType = ChatRequestType.SendMessage,
+                requestType = ChatRequestType.Message,
                 message = message,
                 requestTimeId = DateTime.UtcNow
             }
@@ -118,5 +118,34 @@ public class ChatServerHandlerUnitTests
             c => c.SendResponse(transmission, ChatServerHandler.malformedRequestResponse),
             Times.Exactly(1)
         );
+    }
+
+    [TestMethod]
+    public void ReturnsListOfClients()
+    {
+        string clientName = "test";
+        var transmission = new Transmission<ChatRequest, ChatResponse>
+        {
+            transmissionType = TransmissionType.request,
+            targetType = TargetType.server,
+            senderId = clientName,
+            request = new ChatRequest { requestType = ChatRequestType.ClientList, }
+        };
+
+        var response = new ChatResponse
+        {
+            requestType = ChatRequestType.ClientList,
+            message = "[\"test\", \"other\"]"
+        };
+
+        chatServerMock.Setup(s => s.CreateListOfClientsResponse()).Returns(response);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
+        chatServerMock.Verify(s => s.CreateListOfClientsResponse(), Times.Exactly(1));
+        clientMock.Verify(s => s.SendResponse(transmission, response));
     }
 }

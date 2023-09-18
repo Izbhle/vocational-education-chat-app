@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using ChatApp;
 using ReactiveUI;
 
@@ -27,6 +29,11 @@ namespace ViewModels
             set => this.RaiseAndSetIfChanged(ref _IsMainVisible, value);
         }
 
+        public List<string> AvailableClients
+        {
+            get { return client?.availableClients ?? new List<string>(); }
+        }
+
         public void Login()
         {
             if (Name == null)
@@ -45,6 +52,7 @@ namespace ViewModels
                 () =>
                 {
                     this.RaisePropertyChanged(nameof(Messages));
+                    this.RaisePropertyChanged(nameof(AvailableClients));
                 }
             );
             IsMainVisible = true;
@@ -60,6 +68,7 @@ namespace ViewModels
             {
                 // We can use "RaiseAndSetIfChanged" to check if the value changed and automatically notify the UI
                 this.RaiseAndSetIfChanged(ref _Target, value);
+                this.RaisePropertyChanged(nameof(Messages));
             }
         }
         private string? _Message; // This is our backing field for Name
@@ -89,6 +98,15 @@ namespace ViewModels
             }
         }
 
+        public void RefreshClientList()
+        {
+            if (client == null)
+            {
+                return;
+            }
+            client.RequestClientList();
+        }
+
         public string Messages
         {
             get
@@ -98,12 +116,9 @@ namespace ViewModels
                     return "Client Disconnected";
                 }
                 string result = "";
-                if (
-                    Target != null
-                    && client.sendMessagesStore.requestTransmissions.ContainsKey(Target)
-                )
+                if (Target != null && client.messagesStore.requestTransmissions.ContainsKey(Target))
                 {
-                    client.sendMessagesStore.requestTransmissions[Target]
+                    client.messagesStore.requestTransmissions[Target]
                         ?.ToList()
                         .ForEach(
                             (transmission) =>

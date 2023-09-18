@@ -1,4 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Network;
+using Tmds.DBus.Protocol;
 
 namespace ChatApp
 {
@@ -14,6 +17,13 @@ namespace ChatApp
                 TransmissionHandlerWrapper
             );
             server.Start();
+        }
+
+        public ChatResponse CreateListOfClientsResponse()
+        {
+            List<string> clients = server.GetListOfClientIds();
+            string message = JsonSerializer.Serialize(clients);
+            return new ChatResponse { requestType = ChatRequestType.ClientList, message = message };
         }
 
         private Func<

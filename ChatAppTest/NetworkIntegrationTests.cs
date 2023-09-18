@@ -48,7 +48,7 @@ public class NetworkIntegrationTests
     [TestMethod]
     public void ServerReceivesRegisterRequest()
     {
-        int port = 1234;
+        int port = 1240;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -67,12 +67,15 @@ public class NetworkIntegrationTests
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(registerTransmission, handlers.serverHandlerTransmission?.request);
+        client.Dispose();
+        Thread.Sleep(200);
+        server.Dispose();
     }
 
     [TestMethod]
     public void ServerCanRegisterClient()
     {
-        int port = 1235;
+        int port = 1241;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -85,18 +88,22 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
+        Thread.Sleep(200);
         client.Start();
         Thread.Sleep(200);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
 
         Assert.IsTrue(server.clients.ContainsKey(id));
+        client.Dispose();
+        Thread.Sleep(200);
+        server.Dispose();
     }
 
     [TestMethod]
     public void ClientCanSendMessage()
     {
-        int port = 1236;
+        int port = 1242;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -109,6 +116,7 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
+        Thread.Sleep(200);
         client.Start();
         Thread.Sleep(200);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -120,12 +128,15 @@ public class NetworkIntegrationTests
 
         Assert.AreEqual(server.clients[id], handlers.serverHandlerClient);
         Assert.AreEqual(message, handlers.serverHandlerTransmission?.request);
+        client.Dispose();
+        Thread.Sleep(200);
+        server.Dispose();
     }
 
     [TestMethod]
     public void ClientCanReceiveMessage()
     {
-        int port = 1237;
+        int port = 1243;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -138,6 +149,7 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
+        Thread.Sleep(200);
         client.Start();
         Thread.Sleep(200);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -150,12 +162,15 @@ public class NetworkIntegrationTests
 
         Assert.AreEqual(client, handlers.clientHandlerClient);
         Assert.AreEqual(message, handlers.clientHandlerTransmission?.request);
+        client.Dispose();
+        Thread.Sleep(200);
+        server.Dispose();
     }
 
     [TestMethod]
     public void ServerReceivesDisconnectRequest()
     {
-        int port = 1238;
+        int port = 1244;
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
@@ -168,10 +183,12 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
+        Thread.Sleep(200);
         client.Start();
         Thread.Sleep(200);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
+        Thread.Sleep(200);
 
         Assert.IsTrue(server.clients.ContainsKey(id));
         client.Dispose();
@@ -180,5 +197,6 @@ public class NetworkIntegrationTests
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(disconnectTransmission, handlers.serverHandlerTransmission?.request);
+        server.Dispose();
     }
 }

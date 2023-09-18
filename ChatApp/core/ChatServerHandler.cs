@@ -60,6 +60,12 @@ namespace ChatApp
                                         server.DisconnectClientAction(client.Id);
                                         client.Dispose();
                                         break;
+                                    case ChatRequestType.ClientList:
+                                        client.SendResponse(
+                                            transmission,
+                                            chatServer.CreateListOfClientsResponse()
+                                        );
+                                        break;
                                 }
                             }
                             break;

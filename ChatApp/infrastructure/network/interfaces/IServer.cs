@@ -16,6 +16,12 @@ namespace Network
         public Dictionary<string, INetworkClient<Req, Res>> clients { get; }
 
         /// <summary>
+        /// Use this to get all valid clients.
+        /// </summary>
+        /// <returns>A list with the ids of all connected clients</returns>
+        public abstract List<string> GetListOfClientIds();
+
+        /// <summary>
         /// Method that tries to send a transmission to a connected client
         /// </summary>
         /// <param name="targetId">Id of target client</param>
