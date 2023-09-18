@@ -25,11 +25,15 @@ namespace Network
 
             listener.Start();
             // TODO: Add a lock
-            while (true)
+            try
             {
-                client = listener.AcceptTcpClient();
-                action(client);
+                while (true)
+                {
+                    client = listener.AcceptTcpClient();
+                    action(client);
+                }
             }
+            catch (SocketException) { }
             // listener.Stop();
         }
 

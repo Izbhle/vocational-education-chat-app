@@ -8,7 +8,7 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    public class NetworkClient<Req, Res>: INetworkClient<Req, Res>
+    public class NetworkClient<Req, Res> : INetworkClient<Req, Res>
     {
         private string? _Id;
 
@@ -47,7 +47,7 @@ namespace Network
         /// <summary>
         /// Callback to execute on the server when a stream closes
         /// </summary>
-        private readonly Action<string>? closeStreamServerAction;
+        private readonly Action<string?>? closeStreamServerAction;
         private readonly string? ip;
         private readonly int? port;
 
@@ -92,7 +92,7 @@ namespace Network
                 NetworkClient<Req, Res>,
                 Action<Transmission<Req, Res>?>
             > transmissionHandlerFactory,
-            Action<string> streamCloseAction
+            Action<string?> streamCloseAction
         )
         {
             tcpClient = client;
@@ -145,15 +145,8 @@ namespace Network
         private void CloseStreamAction()
         {
             transmissionReceiver = null;
-            if (stream != null)
-            {
-                stream.Dispose();
-                stream = null;
-            }
-            if (Id != null)
-            {
-                closeStreamServerAction?.Invoke(Id); // Also execute server callback when it exists.
-            }
+            stream = null;
+            closeStreamServerAction?.Invoke(Id); // Also execute server callback when it exists.
         }
 
         /// <summary>
@@ -169,21 +162,12 @@ namespace Network
         /// </summary>
         public void Dispose()
         {
-            if (tcpClient.Connected)
-            {
-                if (stream == null)
-                {
-                    tcpClient.Dispose();
-                    return;
-                }
-                if (disconnectRequest != null)
-                    SendServerRequest(disconnectRequest);
-                stream.Dispose();
-                stream = null;
-                tcpClient.Dispose();
-                return;
-            }
+            if (disconnectRequest != null)
+                SendServerRequest(disconnectRequest);
+            Thread.Sleep(200);
+            stream?.Dispose();
             tcpClient.Dispose();
+            return;
         }
 
         /// <summary>
