@@ -8,23 +8,19 @@ namespace ChatApp
 
         public Dictionary<
             string,
-            Dictionary<string, Transmission<ChatRequest, ChatResponse>>
+            Dictionary<string, ChatTransmission>
         > requestTransmissions { get; }
 
         public ChatRequestStore(string id)
         {
             storeId = id;
-            requestTransmissions =
-                new Dictionary<
-                    string,
-                    Dictionary<string, Transmission<ChatRequest, ChatResponse>>
-                >();
+            requestTransmissions = new Dictionary<string, Dictionary<string, ChatTransmission>>();
         }
 
-        private Dictionary<
-            string,
-            Transmission<ChatRequest, ChatResponse>
-        > GetTargetTransmissionDict(string receiverId, string senderId)
+        private Dictionary<string, ChatTransmission> GetTargetTransmissionDict(
+            string receiverId,
+            string senderId
+        )
         {
             string targetId;
             if (senderId == storeId)
@@ -37,15 +33,12 @@ namespace ChatApp
             }
             if (!requestTransmissions.ContainsKey(targetId))
             {
-                requestTransmissions.Add(
-                    targetId,
-                    new Dictionary<string, Transmission<ChatRequest, ChatResponse>>()
-                );
+                requestTransmissions.Add(targetId, new Dictionary<string, ChatTransmission>());
             }
             return requestTransmissions[targetId];
         }
 
-        public void Store(Transmission<ChatRequest, ChatResponse>? transmission)
+        public void Store(ITransmission<ChatRequest, ChatResponse>? transmission)
         {
             if (
                 transmission == null
@@ -68,7 +61,7 @@ namespace ChatApp
                     {
                         targetDict.TryAdd(
                             transmission.request.requestTimeId.ToString()!,
-                            new Transmission<ChatRequest, ChatResponse>
+                            new ChatTransmission
                             {
                                 targetType = transmission.targetType,
                                 transmissionType = transmission.transmissionType
@@ -89,7 +82,7 @@ namespace ChatApp
                     {
                         targetDict.TryAdd(
                             transmission.response.requestTimeId.ToString()!,
-                            new Transmission<ChatRequest, ChatResponse>
+                            new ChatTransmission
                             {
                                 targetType = transmission.targetType,
                                 transmissionType = transmission.transmissionType

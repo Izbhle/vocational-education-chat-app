@@ -11,7 +11,7 @@ namespace Network
     public class TransmissionReceiver<Req, Res>
     {
         private readonly NetworkStream stream;
-        private readonly Action<Transmission<Req, Res>?> transmissionHandler;
+        private readonly Action<ITransmission<Req, Res>?> transmissionHandler;
 
         /// <summary>
         /// Action to execute when the stream closes
@@ -50,7 +50,7 @@ namespace Network
         /// <param name="closeAction">Action to execute when the stream closes</param>
         public TransmissionReceiver(
             NetworkStream tcpStream,
-            Action<Transmission<Req, Res>?> transmissionAction,
+            Action<ITransmission<Req, Res>?> transmissionAction,
             Action? closeAction
         )
         {

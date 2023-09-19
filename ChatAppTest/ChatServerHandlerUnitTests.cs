@@ -13,7 +13,7 @@ public class ChatServerHandlerUnitTests
     public void RegistersClient()
     {
         string clientName = "test";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.server,
@@ -41,7 +41,7 @@ public class ChatServerHandlerUnitTests
     {
         string clientName = "test";
         clientMock.SetupProperty(c => c.Id, clientName);
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.server,
@@ -64,7 +64,7 @@ public class ChatServerHandlerUnitTests
         string clientName = "test";
         string targetName = "target";
         string message = "message";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.client,
@@ -93,7 +93,7 @@ public class ChatServerHandlerUnitTests
         string clientName = "test";
         string targetName = "target";
         string message = "message";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.client,
@@ -124,7 +124,7 @@ public class ChatServerHandlerUnitTests
     public void ReturnsListOfClients()
     {
         string clientName = "test";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.server,

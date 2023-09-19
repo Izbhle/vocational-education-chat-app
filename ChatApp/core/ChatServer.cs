@@ -28,7 +28,7 @@ namespace ChatApp
 
         private Func<
             INetworkClient<ChatRequest, ChatResponse>,
-            Action<Transmission<ChatRequest, ChatResponse>?>
+            Action<ITransmission<ChatRequest, ChatResponse>?>
         > TransmissionHandlerWrapper(INetworkServer<ChatRequest, ChatResponse> server)
         {
             return (client) =>

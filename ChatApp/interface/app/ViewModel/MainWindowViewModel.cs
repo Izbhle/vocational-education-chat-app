@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-using Avalonia.Controls;
 using ChatApp;
 using ReactiveUI;
 
@@ -107,32 +105,19 @@ namespace ViewModels
             client.RequestClientList();
         }
 
-        public string Messages
+        public List<ChatTransmission> Messages
         {
             get
             {
                 if (client == null)
                 {
-                    return "Client Disconnected";
+                    return new List<ChatTransmission>();
                 }
-                string result = "";
                 if (Target != null && client.messagesStore.requestTransmissions.ContainsKey(Target))
                 {
-                    client.messagesStore.requestTransmissions[Target]
-                        ?.ToList()
-                        .ForEach(
-                            (transmission) =>
-                            {
-                                result +=
-                                    "from "
-                                        + transmission.Value.senderId
-                                        + ": "
-                                        + transmission.Value.request?.message
-                                    ?? " ";
-                            }
-                        );
+                    return client.messagesStore.requestTransmissions[Target].Values.ToList();
                 }
-                return result;
+                return new List<ChatTransmission>();
             }
         }
 

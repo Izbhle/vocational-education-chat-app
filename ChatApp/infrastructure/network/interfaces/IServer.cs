@@ -28,7 +28,7 @@ namespace Network
         /// <param name="transmission">Transmission to be sent</param>
         public abstract bool TrySendTransmission(
             string? targetId,
-            Transmission<Req, Res> transmission
+            ITransmission<Req, Res> transmission
         );
 
         /// <summary>

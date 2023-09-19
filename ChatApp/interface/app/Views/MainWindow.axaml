@@ -45,7 +45,19 @@
 					<Button Command="{Binding RefreshClientList}">Refresh</Button>
 				</StackPanel>
 				<StackPanel>
-					<TextBlock Text="{Binding Messages}"></TextBlock>
+					<ItemsControl ItemsSource="{Binding Messages}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<DockPanel>
+									<TextBlock Text="{Binding request.requestTimeId}"/>
+									<TextBlock Text=": "/>
+									<TextBlock Text="{Binding senderId}"/>
+									<TextBlock Text=": "/>
+									<TextBlock Text="{Binding request.message}"/>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
 					<TextBlock>Errors</TextBlock>
 					<TextBox Text="{Binding Message}"/>
 					<Button Command="{Binding Send}">Send</Button>

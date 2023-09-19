@@ -1,5 +1,4 @@
 using System.Text.Json;
-using DynamicData;
 using Network;
 
 namespace ChatApp
@@ -9,11 +8,9 @@ namespace ChatApp
         public static void TransmissionHandler(
             IChatClient chatClient,
             INetworkClient<ChatRequest, ChatResponse> client,
-            Transmission<ChatRequest, ChatResponse>? transmission
+            ITransmission<ChatRequest, ChatResponse>? transmission
         )
         {
-            Console.WriteLine(transmission?.request?.requestTimeId);
-            Console.WriteLine(transmission?.response?.requestTimeId);
             if (transmission == null)
             {
                 return;
@@ -23,7 +20,7 @@ namespace ChatApp
                 case TransmissionType.request:
                     if (transmission.request == null)
                     {
-                        return;
+                        break;
                     }
                     switch (transmission.request.requestType)
                     {
@@ -43,7 +40,7 @@ namespace ChatApp
                 case TransmissionType.response:
                     if (transmission.response == null)
                     {
-                        return;
+                        break;
                     }
                     switch (transmission.response.requestType)
                     {
@@ -52,7 +49,7 @@ namespace ChatApp
                             break;
                         case ChatRequestType.ClientList:
                             if (transmission.response.message == null)
-                                return;
+                                break;
                             try
                             {
                                 var clients = JsonSerializer.Deserialize<List<string>>(
