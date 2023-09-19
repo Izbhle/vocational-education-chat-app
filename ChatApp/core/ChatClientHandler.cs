@@ -12,8 +12,6 @@ namespace ChatApp
             Transmission<ChatRequest, ChatResponse>? transmission
         )
         {
-            Console.WriteLine(transmission?.request?.requestTimeId);
-            Console.WriteLine(transmission?.response?.requestTimeId);
             if (transmission == null)
             {
                 return;
