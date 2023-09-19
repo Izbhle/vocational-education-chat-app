@@ -23,7 +23,7 @@ public class ChatClientHandlerUnitTests
         string message = "message";
         string senderName = "sender";
         string receiverName = "receiver";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.request,
             targetType = TargetType.client,
@@ -51,7 +51,7 @@ public class ChatClientHandlerUnitTests
     {
         string senderName = "sender";
         string receiverName = "receiver";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.response,
             targetType = TargetType.client,
@@ -77,7 +77,7 @@ public class ChatClientHandlerUnitTests
     public void ReceivesAndParsesConnectedClientsList()
     {
         string receiverName = "receiver";
-        var transmission = new Transmission<ChatRequest, ChatResponse>
+        var transmission = new ChatTransmission
         {
             transmissionType = TransmissionType.response,
             targetType = TargetType.client,

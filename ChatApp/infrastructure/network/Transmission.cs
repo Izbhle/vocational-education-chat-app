@@ -25,7 +25,7 @@ namespace Network
     /// </summary>
     /// <typeparam name="Req">Request</typeparam>
     /// <typeparam name="Res">Response</typeparam>
-    public class Transmission<Req, Res>
+    public class Transmission<Req, Res> : ITransmission<Req, Res>
     {
         public TransmissionType? transmissionType { get; set; }
         public TargetType? targetType { get; set; }
@@ -46,13 +46,13 @@ namespace Network
         public string jsonString;
 
         /// <value>Attribute <c>data</c>: class Representation for C# logic</value>
-        public Transmission<Req, Res>? data;
+        public ITransmission<Req, Res>? data;
 
         /// <summary>
         /// Transforms Transmission object into jsonString
         /// </summary>
         /// <param name="transmission"></param>
-        public TransmissionWrapper(Transmission<Req, Res>? transmission)
+        public TransmissionWrapper(ITransmission<Req, Res>? transmission)
         {
             data = transmission;
             jsonString = JsonSerializer.Serialize(data);

@@ -14,7 +14,7 @@ namespace ChatApp
             IChatServer chatServer,
             INetworkServer<ChatRequest, ChatResponse> server,
             INetworkClient<ChatRequest, ChatResponse> client,
-            Transmission<ChatRequest, ChatResponse>? transmission
+            ITransmission<ChatRequest, ChatResponse>? transmission
         )
         {
             if (transmission == null)

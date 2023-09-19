@@ -53,7 +53,7 @@ namespace ChatApp
             client.SendServerRequest(request);
         }
 
-        private Action<Transmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(
+        private Action<ITransmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(
             NetworkClient<ChatRequest, ChatResponse> client
         )
         {

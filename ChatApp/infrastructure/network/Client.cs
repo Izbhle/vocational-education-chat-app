@@ -32,7 +32,7 @@ namespace Network
         private NetworkStream? stream;
 
         private TransmissionReceiver<Req, Res>? transmissionReceiver;
-        private readonly Action<Transmission<Req, Res>?> transmissionHandler;
+        private readonly Action<ITransmission<Req, Res>?> transmissionHandler;
 
         /// <summary>
         /// This is the initial request to be send to the server to register this client, used by client applications
@@ -65,7 +65,7 @@ namespace Network
             int networkPort,
             Func<
                 NetworkClient<Req, Res>,
-                Action<Transmission<Req, Res>?>
+                Action<ITransmission<Req, Res>?>
             > transmissionHandlerFactory,
             Req serverRegisterRequest,
             Req serverDisconnectRequest
@@ -90,7 +90,7 @@ namespace Network
             TcpClient client,
             Func<
                 NetworkClient<Req, Res>,
-                Action<Transmission<Req, Res>?>
+                Action<ITransmission<Req, Res>?>
             > transmissionHandlerFactory,
             Action<string?> streamCloseAction
         )
@@ -174,7 +174,7 @@ namespace Network
         /// Sends a transmission to the server
         /// </summary>
         /// <param name="transmission for the server">Transmission</param>
-        public void SendTransmission(Transmission<Req, Res> transmission)
+        public void SendTransmission(ITransmission<Req, Res> transmission)
         {
             var transmissionWrapper = new TransmissionWrapper<Req, Res>(transmission);
             TrySendData(transmissionWrapper.jsonString);
@@ -186,7 +186,7 @@ namespace Network
         /// <param name="receiverId">ID of the target client</param>
         /// <param name="request">Request</param>
         /// <returns><c>Transmission</c> if success, <c>null</c> otherwise</returns>
-        public Transmission<Req, Res>? SendClientRequest(string receiverId, Req request)
+        public ITransmission<Req, Res>? SendClientRequest(string receiverId, Req request)
         {
             if (Id == null)
             {
@@ -214,7 +214,7 @@ namespace Network
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns><c>Transmission</c> if success, <c>null</c> otherwise</returns>
-        public Transmission<Req, Res>? SendServerRequest(Req request)
+        public ITransmission<Req, Res>? SendServerRequest(Req request)
         {
             if (Id == null)
             {
@@ -242,8 +242,8 @@ namespace Network
         /// <param name="oldTransmission">Request transmission</param>
         /// <param name="response">Response to be send</param>
         /// <returns>send <c>Transmission</c> if success, <c>null</c> otherwise</returns>
-        public Transmission<Req, Res>? SendResponse(
-            Transmission<Req, Res> oldTransmission,
+        public ITransmission<Req, Res>? SendResponse(
+            ITransmission<Req, Res> oldTransmission,
             Res response
         )
         {

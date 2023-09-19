@@ -22,7 +22,7 @@ namespace Network
         /// <returns>Transmission handler provided by the Application</returns>
         private readonly Func<
             INetworkClient<Req, Res>,
-            Action<Transmission<Req, Res>?>
+            Action<ITransmission<Req, Res>?>
         > transmissionHandlerClientFactory;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Network
             int port,
             Func<
                 NetworkServer<Req, Res>,
-                Func<INetworkClient<Req, Res>, Action<Transmission<Req, Res>?>>
+                Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
             > transmissionHandlerServerFactory
         )
         {
@@ -60,7 +60,7 @@ namespace Network
         /// </summary>
         /// <param name="targetId">Id of target client</param>
         /// <param name="transmission">Transmission to be sent</param>
-        public bool TrySendTransmission(string? targetId, Transmission<Req, Res> transmission)
+        public bool TrySendTransmission(string? targetId, ITransmission<Req, Res> transmission)
         {
             if (targetId != null && clients.ContainsKey(targetId))
             {

@@ -12,11 +12,11 @@ public class NetworkIntegrationTests
     {
         public INetworkServer<string, string>? serverHandlerServer;
         public INetworkClient<string, string>? serverHandlerClient;
-        public Transmission<string, string>? serverHandlerTransmission;
+        public ITransmission<string, string>? serverHandlerTransmission;
 
         public Func<
             INetworkClient<string, string>,
-            Action<Transmission<string, string>?>
+            Action<ITransmission<string, string>?>
         > ServerHandler(INetworkServer<string, string> server)
         {
             serverHandlerServer = server;
@@ -31,9 +31,9 @@ public class NetworkIntegrationTests
         }
 
         public INetworkClient<string, string>? clientHandlerClient;
-        public Transmission<string, string>? clientHandlerTransmission;
+        public ITransmission<string, string>? clientHandlerTransmission;
 
-        public Action<Transmission<string, string>?> ClientHandler(
+        public Action<ITransmission<string, string>?> ClientHandler(
             INetworkClient<string, string> client
         )
         {
