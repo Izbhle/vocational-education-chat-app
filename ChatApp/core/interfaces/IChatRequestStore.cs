@@ -6,7 +6,7 @@ namespace ChatApp
     {
         public Dictionary<
             string,
-            Dictionary<DateTime, Transmission<ChatRequest, ChatResponse>>
+            Dictionary<string, Transmission<ChatRequest, ChatResponse>>
         > requestTransmissions { get; }
 
         public abstract void Store(Transmission<ChatRequest, ChatResponse>? Transmission);

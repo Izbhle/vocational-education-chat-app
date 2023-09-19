@@ -12,6 +12,8 @@ namespace ChatApp
             Transmission<ChatRequest, ChatResponse>? transmission
         )
         {
+            Console.WriteLine(transmission?.request?.requestTimeId);
+            Console.WriteLine(transmission?.response?.requestTimeId);
             if (transmission == null)
             {
                 return;
@@ -27,7 +29,14 @@ namespace ChatApp
                     {
                         case ChatRequestType.Message:
                             chatClient.messagesStore.Store(transmission);
-                            client.SendResponse(transmission, new ChatResponse { });
+                            client.SendResponse(
+                                transmission,
+                                new ChatResponse
+                                {
+                                    requestType = ChatRequestType.Message,
+                                    requestTimeId = transmission.request.requestTimeId
+                                }
+                            );
                             break;
                     }
                     break;
