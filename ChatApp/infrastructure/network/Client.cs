@@ -174,10 +174,12 @@ namespace Network
         /// Sends a transmission to the server
         /// </summary>
         /// <param name="transmission for the server">Transmission</param>
-        public void SendTransmission(ITransmission<Req, Res> transmission)
+        /// <returns><c>true</c> if success, <c>false</c> otherwise</returns>
+
+        public bool TrySendTransmission(ITransmission<Req, Res> transmission)
         {
             var transmissionWrapper = new TransmissionWrapper<Req, Res>(transmission);
-            TrySendData(transmissionWrapper.jsonString);
+            return TrySendData(transmissionWrapper.jsonString);
         }
 
         /// <summary>
@@ -247,17 +249,13 @@ namespace Network
             Res response
         )
         {
-            if (Id == null)
-            {
-                return null;
-            }
             var transmission = new TransmissionWrapper<Req, Res>(
                 new Transmission<Req, Res>
                 {
                     transmissionType = TransmissionType.response,
                     targetType = oldTransmission.targetType,
-                    senderId = oldTransmission.senderId,
-                    receiverId = Id,
+                    senderId = oldTransmission.receiverId,
+                    receiverId = oldTransmission.senderId,
                     response = response
                 }
             );

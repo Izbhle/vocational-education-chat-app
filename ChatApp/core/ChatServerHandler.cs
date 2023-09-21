@@ -49,12 +49,13 @@ namespace ChatApp
                                                 transmission,
                                                 malformedRequestResponse
                                             );
-                                            return;
+                                            break;
                                         }
                                         server.RegisterClientAction(
                                             client,
                                             transmission.request.message
                                         );
+                                        server.SendResponseToAllClients(chatServer.CreateListOfClientsResponse());
                                         break;
                                     case ChatRequestType.DisconnectClient:
                                         server.DisconnectClientAction(client.Id);

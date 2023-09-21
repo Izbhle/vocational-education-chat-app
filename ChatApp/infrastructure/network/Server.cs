@@ -64,10 +64,30 @@ namespace Network
         {
             if (targetId != null && clients.ContainsKey(targetId))
             {
-                clients[targetId].SendTransmission(transmission);
-                return true;
+                return clients[targetId].TrySendTransmission(transmission);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Method that sends a response to a all connected clients
+        /// </summary>
+        /// <param name="response">Transmission to be sent</param>
+        public void SendResponseToAllClients(
+            Res response
+        )
+        {
+            foreach (INetworkClient<Req, Res> client in clients.Values)
+            {
+                client.TrySendTransmission(
+                    new Transmission<Req, Res>
+                    {
+                        transmissionType = TransmissionType.response,
+                        targetType = TargetType.server,
+                        receiverId = client.Id,
+                        response = response
+                    });
+            }
         }
 
         /// <summary>

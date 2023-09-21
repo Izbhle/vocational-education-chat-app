@@ -146,6 +146,35 @@ public class ChatServerHandlerUnitTests
             transmission
         );
         chatServerMock.Verify(s => s.CreateListOfClientsResponse(), Times.Exactly(1));
-        clientMock.Verify(s => s.SendResponse(transmission, response));
+        clientMock.Verify(c => c.SendResponse(transmission, response));
+    }
+
+    [TestMethod]
+    public void DistributesListOfClientsToAllAfterRegistration()
+    {
+        string clientName = "test";
+        var transmission = new ChatTransmission
+        {
+            transmissionType = TransmissionType.request,
+            targetType = TargetType.server,
+            senderId = clientName,
+            request = new ChatRequest { requestType = ChatRequestType.RegisterClient, message = clientName }
+        };
+
+        var response = new ChatResponse
+        {
+            requestType = ChatRequestType.ClientList,
+            message = "[\"test\", \"other\"]"
+        };
+
+        chatServerMock.Setup(s => s.CreateListOfClientsResponse()).Returns(response);
+        ChatServerHandler.TransmissionHandler(
+            chatServerMock.Object,
+            serverMock.Object,
+            clientMock.Object,
+            transmission
+        );
+        chatServerMock.Verify(s => s.CreateListOfClientsResponse(), Times.Exactly(1));
+        serverMock.Verify(s => s.SendResponseToAllClients(response), Times.Exactly(1));
     }
 }

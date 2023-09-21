@@ -32,6 +32,14 @@ namespace Network
         );
 
         /// <summary>
+        /// Method that sends a response to a all connected clients
+        /// </summary>
+        /// <param name="transmission">Transmission to be sent</param>
+        public abstract void SendResponseToAllClients(
+            Res response
+        );
+
+        /// <summary>
         /// /// Starts the TcpListener to start accepting incoming connections
         /// </summary>
         public abstract void RegisterClientAction(INetworkClient<Req, Res> client, string id);
