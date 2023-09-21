@@ -26,7 +26,8 @@ namespace Network
         /// Sends a transmission to the server
         /// </summary>
         /// <param name="transmission for the server">Transmission</param>
-        public abstract void SendTransmission(ITransmission<Req, Res> transmission);
+        /// <returns><c>true</c> if success, <c>false</c> otherwise</returns>
+        public abstract bool TrySendTransmission(ITransmission<Req, Res> transmission);
 
         /// <summary>
         /// Send a client request to the server
