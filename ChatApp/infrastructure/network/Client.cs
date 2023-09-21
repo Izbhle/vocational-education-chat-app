@@ -247,17 +247,13 @@ namespace Network
             Res response
         )
         {
-            if (Id == null)
-            {
-                return null;
-            }
             var transmission = new TransmissionWrapper<Req, Res>(
                 new Transmission<Req, Res>
                 {
                     transmissionType = TransmissionType.response,
                     targetType = oldTransmission.targetType,
-                    senderId = oldTransmission.senderId,
-                    receiverId = Id,
+                    senderId = oldTransmission.receiverId,
+                    receiverId = oldTransmission.senderId,
                     response = response
                 }
             );

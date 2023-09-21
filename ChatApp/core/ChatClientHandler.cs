@@ -56,7 +56,7 @@ namespace ChatApp
                                     transmission.response.message
                                 );
                                 if (clients == null)
-                                    return;
+                                    break;
                                 chatClient.availableClients = clients;
                             }
                             catch (JsonException) { }

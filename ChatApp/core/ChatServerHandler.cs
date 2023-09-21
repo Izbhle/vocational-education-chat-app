@@ -55,6 +55,10 @@ namespace ChatApp
                                             client,
                                             transmission.request.message
                                         );
+                                        server.clients.Values.ToList().ForEach((c) => c.SendResponse(
+                                            transmission,
+                                            chatServer.CreateListOfClientsResponse()
+                                        ));
                                         break;
                                     case ChatRequestType.DisconnectClient:
                                         server.DisconnectClientAction(client.Id);
