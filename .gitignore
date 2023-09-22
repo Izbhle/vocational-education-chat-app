@@ -132,8 +132,10 @@ $RECYCLE.BIN/
 
 _NCrunch*
 
-# Vscode editor settings
-.vscode
-
 # Test db for this repository
 test.db
+
+# MSTest coverage results
+ChatAppTest/TestResults/**/*
+
+coveragereport/**/*

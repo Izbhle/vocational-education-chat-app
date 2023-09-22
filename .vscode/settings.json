@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "csharpier.enableDebugLogs": true,
+    "editor.defaultFormatter": "ms-dotnettools.csdevkit",
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    }
+}
