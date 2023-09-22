@@ -13,7 +13,7 @@ namespace Network
         /// <summary>
         /// Reference all clients by clientId. Used to Relay Transmissions.
         /// </summary>
-        public Dictionary<string, INetworkClient<Req, Res>> clients { get; }
+        private readonly Dictionary<string, INetworkClient<Req, Res>> clients;
         private readonly ClientConnectionListener clientConnectionListener;
 
         /// <summary>
@@ -56,26 +56,22 @@ namespace Network
         }
 
         /// <summary>
-        /// Method that tries to send a transmission to a connected client
+        /// Used to get a specific client
         /// </summary>
-        /// <param name="targetId">Id of target client</param>
-        /// <param name="transmission">Transmission to be sent</param>
-        public bool TrySendTransmission(string? targetId, ITransmission<Req, Res> transmission)
+        /// <param name="id">Id of the client</param>
+        /// <returns>The requested client if it is connected, null otherwise</returns>
+        public INetworkClient<Req, Res>? GetClient(string? id)
         {
-            if (targetId != null && clients.ContainsKey(targetId))
-            {
-                return clients[targetId].TrySendTransmission(transmission);
-            }
-            return false;
+            if (id == null || !clients.ContainsKey(id))
+                return null;
+            return clients[id];
         }
 
         /// <summary>
         /// Method that sends a response to a all connected clients
         /// </summary>
         /// <param name="response">Transmission to be sent</param>
-        public void SendResponseToAllClients(
-            Res response
-        )
+        public void SendResponseToAllClients(Res response)
         {
             foreach (INetworkClient<Req, Res> client in clients.Values)
             {
@@ -86,7 +82,8 @@ namespace Network
                         targetType = TargetType.server,
                         receiverId = client.Id,
                         response = response
-                    });
+                    }
+                );
             }
         }
 

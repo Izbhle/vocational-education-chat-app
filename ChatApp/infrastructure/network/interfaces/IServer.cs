@@ -11,33 +11,23 @@ namespace Network
     public interface INetworkServer<Req, Res>
     {
         /// <summary>
-        /// Reference all clients by clientId. Used to Relay Transmissions.
-        /// </summary>
-        public Dictionary<string, INetworkClient<Req, Res>> clients { get; }
-
-        /// <summary>
         /// Use this to get all valid clients.
         /// </summary>
         /// <returns>A list with the ids of all connected clients</returns>
         public abstract List<string> GetListOfClientIds();
 
         /// <summary>
-        /// Method that tries to send a transmission to a connected client
+        /// Used to get a specific client
         /// </summary>
-        /// <param name="targetId">Id of target client</param>
-        /// <param name="transmission">Transmission to be sent</param>
-        public abstract bool TrySendTransmission(
-            string? targetId,
-            ITransmission<Req, Res> transmission
-        );
+        /// <param name="id">Id of the client</param>
+        /// <returns>The requested client if it is connected, null otherwise</returns>
+        public abstract INetworkClient<Req, Res>? GetClient(string? id);
 
         /// <summary>
         /// Method that sends a response to a all connected clients
         /// </summary>
         /// <param name="transmission">Transmission to be sent</param>
-        public abstract void SendResponseToAllClients(
-            Res response
-        );
+        public abstract void SendResponseToAllClients(Res response);
 
         /// <summary>
         /// /// Starts the TcpListener to start accepting incoming connections

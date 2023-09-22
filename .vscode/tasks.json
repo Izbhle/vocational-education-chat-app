@@ -43,9 +43,7 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/ChatAppTest/ChatAppTest.csproj",
-                "/p:CollectCoverage=true",
-                "/p:CoverletOutputFormat=cobertura"
+                "--collect:\"XPlat Code Coverage\"" 
             ],
             "problemMatcher": "$msCompile",
             "group": {

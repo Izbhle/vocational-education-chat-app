@@ -52,7 +52,7 @@ public class NetworkIntegrationTests
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
@@ -62,13 +62,13 @@ public class NetworkIntegrationTests
             disconnectTransmission
         );
         client.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
 
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(registerTransmission, handlers.serverHandlerTransmission?.request);
         client.Dispose();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         server.Dispose();
     }
 
@@ -79,7 +79,7 @@ public class NetworkIntegrationTests
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
@@ -88,15 +88,15 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         client.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
 
-        Assert.IsTrue(server.clients.ContainsKey(id));
+        Assert.IsTrue(server.GetListOfClientIds().Contains(id));
         client.Dispose();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         server.Dispose();
     }
 
@@ -107,7 +107,7 @@ public class NetworkIntegrationTests
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
@@ -116,20 +116,20 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         client.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
 
         string message = "message";
         client.SendClientRequest(id, message);
-        Thread.Sleep(200);
+        Thread.Sleep(20);
 
-        Assert.AreEqual(server.clients[id], handlers.serverHandlerClient);
+        Assert.AreEqual(server.GetClient(id), handlers.serverHandlerClient);
         Assert.AreEqual(message, handlers.serverHandlerTransmission?.request);
         client.Dispose();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         server.Dispose();
     }
 
@@ -140,7 +140,7 @@ public class NetworkIntegrationTests
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
@@ -149,21 +149,21 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         client.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
 
-        Assert.IsTrue(server.clients.ContainsKey(id));
+        Assert.IsTrue(server.GetListOfClientIds().Contains(id));
         string message = "message";
-        server.clients[id].SendClientRequest(id, message);
-        Thread.Sleep(200);
+        server.GetClient(id)?.SendClientRequest(id, message);
+        Thread.Sleep(20);
 
         Assert.AreEqual(client, handlers.clientHandlerClient);
         Assert.AreEqual(message, handlers.clientHandlerTransmission?.request);
         client.Dispose();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         server.Dispose();
     }
 
@@ -174,7 +174,7 @@ public class NetworkIntegrationTests
         var handlers = new TestHandlers();
         var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
         server.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
@@ -183,20 +183,100 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         client.Start();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
-        Thread.Sleep(200);
+        Thread.Sleep(20);
 
-        Assert.IsTrue(server.clients.ContainsKey(id));
+        Assert.IsTrue(server.GetListOfClientIds().Contains(id));
         client.Dispose();
-        Thread.Sleep(200);
+        Thread.Sleep(20);
 
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(disconnectTransmission, handlers.serverHandlerTransmission?.request);
+        server.Dispose();
+    }
+
+    [TestMethod]
+    public void ClientCanSendResponse()
+    {
+        int port = 1245;
+        var handlers = new TestHandlers();
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
+        server.Start();
+        Thread.Sleep(20);
+        var client = new NetworkClient<string, string>(
+            id,
+            ip,
+            port,
+            (c) => handlers.ClientHandler(c),
+            registerTransmission,
+            disconnectTransmission
+        );
+        Thread.Sleep(20);
+        client.Start();
+        Thread.Sleep(20);
+        Assert.IsNotNull(handlers.serverHandlerClient);
+        server.RegisterClientAction(handlers.serverHandlerClient, id);
+
+        var requestTransmission = new Transmission<string, string>
+        {
+            targetType = TargetType.client,
+            transmissionType = TransmissionType.request,
+            senderId = "other",
+            receiverId = id,
+            request = "request"
+        };
+
+        Assert.IsTrue(server.GetListOfClientIds().Contains(id));
+
+        string response = "response";
+        client.SendResponse(requestTransmission, response);
+        Thread.Sleep(20);
+
+        Assert.AreEqual(server, handlers.serverHandlerServer);
+        Assert.IsNotNull(handlers.serverHandlerClient);
+        Assert.AreEqual(response, handlers.serverHandlerTransmission?.response);
+        client.Dispose();
+        Thread.Sleep(20);
+        server.Dispose();
+    }
+
+    [TestMethod]
+    public void ServerSendsMessagesToAll()
+    {
+        int port = 1246;
+        var handlers = new TestHandlers();
+        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
+        server.Start();
+        Thread.Sleep(20);
+        var client = new NetworkClient<string, string>(
+            id,
+            ip,
+            port,
+            (c) => handlers.ClientHandler(c),
+            registerTransmission,
+            disconnectTransmission
+        );
+        Thread.Sleep(20);
+        client.Start();
+        Thread.Sleep(20);
+        Assert.IsNotNull(handlers.serverHandlerClient);
+        server.RegisterClientAction(handlers.serverHandlerClient, id);
+
+        string response = "response";
+        Assert.IsTrue(server.GetListOfClientIds().Contains(id));
+
+        server.SendResponseToAllClients(response);
+        Thread.Sleep(20);
+
+        Assert.AreEqual(client, handlers.clientHandlerClient);
+        Assert.AreEqual(response, handlers.clientHandlerTransmission?.response);
+        client.Dispose();
+        Thread.Sleep(20);
         server.Dispose();
     }
 }

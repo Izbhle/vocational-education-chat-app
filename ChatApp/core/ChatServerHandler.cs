@@ -10,6 +10,9 @@ namespace ChatApp
         public static readonly ChatResponse operationNotSupportedResponse =
             new() { error = ChatResponseError.OperationNotSupported };
 
+        public static readonly ChatResponse receiverUnknownResponse =
+            new() { error = ChatResponseError.ReceiverUnknown };
+
         public static void TransmissionHandler(
             IChatServer chatServer,
             INetworkServer<ChatRequest, ChatResponse> server,
@@ -24,10 +27,13 @@ namespace ChatApp
             switch (transmission.targetType)
             {
                 case TargetType.client:
-                    bool success = server.TrySendTransmission(
-                        transmission.receiverId,
-                        transmission
-                    );
+                    var serverClient = server.GetClient(transmission.receiverId);
+                    if (serverClient == null)
+                    {
+                        client.SendResponse(transmission, receiverUnknownResponse);
+                        break;
+                    }
+                    bool success = serverClient.TrySendTransmission(transmission);
                     if (!success)
                     {
                         client.SendResponse(transmission, malformedRequestResponse);
@@ -55,7 +61,9 @@ namespace ChatApp
                                             client,
                                             transmission.request.message
                                         );
-                                        server.SendResponseToAllClients(chatServer.CreateListOfClientsResponse());
+                                        server.SendResponseToAllClients(
+                                            chatServer.CreateListOfClientsResponse()
+                                        );
                                         break;
                                     case ChatRequestType.DisconnectClient:
                                         server.DisconnectClientAction(client.Id);

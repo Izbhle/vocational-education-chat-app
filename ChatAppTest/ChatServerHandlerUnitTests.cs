@@ -6,6 +6,7 @@ namespace ChatApp;
 public class ChatServerHandlerUnitTests
 {
     private readonly Mock<INetworkServer<ChatRequest, ChatResponse>> serverMock = new();
+    private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> serverClientMock = new();
     private readonly Mock<INetworkClient<ChatRequest, ChatResponse>> clientMock = new();
     private readonly Mock<IChatServer> chatServerMock = new();
 
@@ -77,6 +78,7 @@ public class ChatServerHandlerUnitTests
                 requestTimeId = DateTime.UtcNow
             }
         };
+        serverMock.Setup(s => s.GetClient(targetName)).Returns(() => serverClientMock.Object);
 
         ChatServerHandler.TransmissionHandler(
             chatServerMock.Object,
@@ -84,7 +86,7 @@ public class ChatServerHandlerUnitTests
             clientMock.Object,
             transmission
         );
-        serverMock.Verify(s => s.TrySendTransmission(targetName, transmission), Times.Exactly(1));
+        serverClientMock.Verify(c => c.TrySendTransmission(transmission), Times.Exactly(1));
     }
 
     [TestMethod]
@@ -106,7 +108,7 @@ public class ChatServerHandlerUnitTests
                 requestTimeId = DateTime.UtcNow
             }
         };
-        serverMock.Setup(s => s.TrySendTransmission(targetName, transmission)).Returns(false);
+        serverMock.Setup(s => s.GetClient(targetName)).Returns(() => null);
 
         ChatServerHandler.TransmissionHandler(
             chatServerMock.Object,
@@ -115,7 +117,7 @@ public class ChatServerHandlerUnitTests
             transmission
         );
         clientMock.Verify(
-            c => c.SendResponse(transmission, ChatServerHandler.malformedRequestResponse),
+            c => c.SendResponse(transmission, ChatServerHandler.receiverUnknownResponse),
             Times.Exactly(1)
         );
     }
@@ -158,7 +160,11 @@ public class ChatServerHandlerUnitTests
             transmissionType = TransmissionType.request,
             targetType = TargetType.server,
             senderId = clientName,
-            request = new ChatRequest { requestType = ChatRequestType.RegisterClient, message = clientName }
+            request = new ChatRequest
+            {
+                requestType = ChatRequestType.RegisterClient,
+                message = clientName
+            }
         };
 
         var response = new ChatResponse

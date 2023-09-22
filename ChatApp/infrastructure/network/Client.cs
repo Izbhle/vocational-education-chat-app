@@ -194,19 +194,17 @@ namespace Network
             {
                 return null;
             }
-            var transmission = new TransmissionWrapper<Req, Res>(
-                new Transmission<Req, Res>
-                {
-                    transmissionType = TransmissionType.request,
-                    targetType = TargetType.client,
-                    receiverId = receiverId,
-                    senderId = Id,
-                    request = request
-                }
-            );
-            if (TrySendData(transmission.jsonString))
+            var transmission = new Transmission<Req, Res>
             {
-                return transmission.data;
+                transmissionType = TransmissionType.request,
+                targetType = TargetType.client,
+                receiverId = receiverId,
+                senderId = Id,
+                request = request
+            };
+            if (TrySendTransmission(transmission))
+            {
+                return transmission;
             }
             return null;
         }
@@ -222,18 +220,16 @@ namespace Network
             {
                 return null;
             }
-            var transmission = new TransmissionWrapper<Req, Res>(
-                new Transmission<Req, Res>
-                {
-                    transmissionType = TransmissionType.request,
-                    targetType = TargetType.server,
-                    senderId = Id,
-                    request = request
-                }
-            );
-            if (TrySendData(transmission.jsonString))
+            var transmission = new Transmission<Req, Res>
             {
-                return transmission.data;
+                transmissionType = TransmissionType.request,
+                targetType = TargetType.server,
+                senderId = Id,
+                request = request
+            };
+            if (TrySendTransmission(transmission))
+            {
+                return transmission;
             }
             return null;
         }
@@ -249,19 +245,17 @@ namespace Network
             Res response
         )
         {
-            var transmission = new TransmissionWrapper<Req, Res>(
-                new Transmission<Req, Res>
-                {
-                    transmissionType = TransmissionType.response,
-                    targetType = oldTransmission.targetType,
-                    senderId = oldTransmission.receiverId,
-                    receiverId = oldTransmission.senderId,
-                    response = response
-                }
-            );
-            if (TrySendData(transmission.jsonString))
+            var transmission = new Transmission<Req, Res>
             {
-                return transmission.data;
+                transmissionType = TransmissionType.response,
+                targetType = oldTransmission.targetType,
+                senderId = oldTransmission.receiverId,
+                receiverId = oldTransmission.senderId,
+                response = response
+            };
+            if (TrySendTransmission(transmission))
+            {
+                return transmission;
             }
             return null;
         }
