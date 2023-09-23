@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ChatApp/bin/Debug/net6.0/ChatApp.dll",
+            "program": "${workspaceFolder}/ChatApp/bin/Debug/net7.0/ChatApp.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
