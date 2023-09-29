@@ -41,9 +41,15 @@ namespace Network
         public abstract void DisconnectClientAction(string? id);
 
         /// <summary>
-        /// /// Starts the TcpListener to start accepting incoming connections
+        /// Starts the TcpListener to start accepting incoming connections
         /// </summary>
-        public abstract void Start();
+        /// <param name="transmissionHandlerServerFactory"> Transmission Handler</param>
+        public void Start(
+            Func<
+                NetworkServer<Req, Res>,
+                Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+            > transmissionHandlerServerFactory
+        );
 
         /// <summary>
         /// Disposes the Server, safely disconnecting all clients.

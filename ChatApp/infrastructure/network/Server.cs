@@ -23,10 +23,10 @@ namespace Network
         /// Factory function used to inject the NetworkClient object into the Handler Bus
         /// </summary>
         /// <returns>Transmission handler provided by the Application</returns>
-        private readonly Func<
+        private Func<
             INetworkClient<Req, Res>,
             Action<ITransmission<Req, Res>?>
-        > transmissionHandlerClientFactory;
+        >? transmissionHandlerClientFactory;
 
         /// <summary>
         ///
@@ -34,18 +34,10 @@ namespace Network
         /// <param name="ipAddress">IP Address of the NetworkServer</param>
         /// <param name="port">Port of the NetworkServer</param>
         /// <param name="transmissionHandlerServerFactory">Factory function used to inject the NetworkServer object into the Handler Bus</param>
-        public NetworkServer(
-            string ipAddress,
-            int portNumber,
-            Func<
-                NetworkServer<Req, Res>,
-                Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
-            > transmissionHandlerServerFactory
-        )
+        public NetworkServer(string ipAddress, int portNumber)
         {
             ip = ipAddress;
             port = portNumber;
-            transmissionHandlerClientFactory = transmissionHandlerServerFactory(this);
             clients = new Dictionary<string, INetworkClient<Req, Res>>();
         }
 
@@ -96,12 +88,8 @@ namespace Network
         /// <param name="client">Incoming connection as a TcpClient that is created by the TcpListener</param>
         private void RegisterNewClient(TcpClient client)
         {
-            var networkClient = new NetworkClient<Req, Res>(
-                client,
-                transmissionHandlerClientFactory,
-                DisconnectClientAction
-            );
-            networkClient.Start();
+            var networkClient = new NetworkClient<Req, Res>(client, DisconnectClientAction);
+            networkClient.Start(transmissionHandlerClientFactory!);
         }
 
         /// <summary>
@@ -128,10 +116,17 @@ namespace Network
         }
 
         /// <summary>
-        /// /// Starts the TcpListener to start accepting incoming connections
-        /// /// </summary>
-        public void Start()
+        /// Starts the TcpListener to start accepting incoming connections
+        /// </summary>
+        /// <param name="transmissionHandlerServerFactory"> Transmission Handler</param>
+        public void Start(
+            Func<
+                NetworkServer<Req, Res>,
+                Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+            > transmissionHandlerServerFactory
+        )
         {
+            transmissionHandlerClientFactory = transmissionHandlerServerFactory(this);
             var tcpListener = new TcpListener(IPAddress.Parse(ip), port);
             clientConnectionListener = new ClientConnectionListener(tcpListener, RegisterNewClient);
             clientConnectionListener.StartListening();

@@ -32,7 +32,7 @@ namespace Network
         private NetworkStream? stream;
 
         private TransmissionReceiver<Req, Res>? transmissionReceiver;
-        private readonly Action<ITransmission<Req, Res>?> transmissionHandler;
+        private Action<ITransmission<Req, Res>?>? transmissionHandler;
 
         /// <summary>
         /// This is the initial request to be send to the server to register this client, used by client applications
@@ -63,10 +63,6 @@ namespace Network
             string initialId,
             string ipAddress,
             int networkPort,
-            Func<
-                NetworkClient<Req, Res>,
-                Action<ITransmission<Req, Res>?>
-            > transmissionHandlerFactory,
             Req serverRegisterRequest,
             Req serverDisconnectRequest
         )
@@ -77,7 +73,6 @@ namespace Network
             tcpClient = new TcpClient(ip, (int)port); // Start the network connection to the server
             registerRequest = serverRegisterRequest;
             disconnectRequest = serverDisconnectRequest;
-            transmissionHandler = transmissionHandlerFactory(this);
         }
 
         /// <summary>
@@ -86,17 +81,9 @@ namespace Network
         /// <param name="client">tcpCLient that is returned by the tcpListener</param>
         /// <param name="transmissionHandlerFactory">Used to inject NetworkClient object into the transmission handler</param>
         /// <param name="streamCloseAction">Execute this action on the server when the stream closes</param>
-        public NetworkClient(
-            TcpClient client,
-            Func<
-                NetworkClient<Req, Res>,
-                Action<ITransmission<Req, Res>?>
-            > transmissionHandlerFactory,
-            Action<string?> streamCloseAction
-        )
+        public NetworkClient(TcpClient client, Action<string?> streamCloseAction)
         {
             tcpClient = client;
-            transmissionHandler = transmissionHandlerFactory(this);
             closeStreamServerAction = streamCloseAction;
         }
 
@@ -132,7 +119,7 @@ namespace Network
                     stream = tcpClient.GetStream();
                     transmissionReceiver = new TransmissionReceiver<Req, Res>(
                         stream,
-                        transmissionHandler,
+                        transmissionHandler!,
                         CloseStreamAction
                     );
                     transmissionReceiver.StartListening();
@@ -163,8 +150,15 @@ namespace Network
         /// <summary>
         /// Starts the stream and the receiver thread.
         /// </summary>
-        public void Start()
+        /// <param name="transmissionHandlerFactory">Transmission Handler</param>
+        public void Start(
+            Func<
+                NetworkClient<Req, Res>,
+                Action<ITransmission<Req, Res>?>
+            > transmissionHandlerFactory
+        )
         {
+            transmissionHandler = transmissionHandlerFactory(this);
             TryStartStream();
         }
 

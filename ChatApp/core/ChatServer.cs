@@ -9,18 +9,20 @@ namespace ChatApp
     {
         private INetworkServer<ChatRequest, ChatResponse> server;
 
-        public ChatServer(string ipAddress, int port)
+        public static ChatServer CreateNew(string ipAddress, int port)
         {
-            server = new NetworkServer<ChatRequest, ChatResponse>(
-                ipAddress,
-                port,
-                TransmissionHandlerWrapper
-            );
+            var server = new NetworkServer<ChatRequest, ChatResponse>(ipAddress, port);
+            return new ChatServer(server);
+        }
+
+        public ChatServer(NetworkServer<ChatRequest, ChatResponse> networkServer)
+        {
+            server = networkServer;
         }
 
         public void Start()
         {
-            server.Start();
+            server.Start(TransmissionHandlerWrapper);
         }
 
         public ChatResponse CreateListOfClientsResponse()

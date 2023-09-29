@@ -40,10 +40,11 @@ namespace ViewModels
             }
             if (IsLaunchServer)
             {
-                server = new ChatServer(IpAddress, 1234);
+                server = ChatServer.CreateNew(IpAddress, 1234);
+                server.Start();
             }
             Thread.Sleep(1000);
-            client = new ChatClient(
+            client = ChatClient.CreateNew(
                 Name,
                 IpAddress,
                 1234,
@@ -53,6 +54,7 @@ namespace ViewModels
                     this.RaisePropertyChanged(nameof(AvailableClients));
                 }
             );
+            client.Start();
             IsMainVisible = true;
             IsLoginVisible = false;
         }
