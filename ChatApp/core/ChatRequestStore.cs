@@ -79,16 +79,7 @@ namespace ChatApp
                     if (transmission.response?.requestTimeId == null)
                         return;
                     if (!targetDict.ContainsKey(transmission.response.requestTimeId.ToString()!))
-                    {
-                        targetDict.TryAdd(
-                            transmission.response.requestTimeId.ToString()!,
-                            new ChatTransmission
-                            {
-                                targetType = transmission.targetType,
-                                transmissionType = transmission.transmissionType
-                            }
-                        );
-                    }
+                        return;
                     targetDict[transmission.response.requestTimeId.ToString()!].response =
                         transmission.response;
                     break;

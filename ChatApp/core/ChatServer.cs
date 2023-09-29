@@ -15,7 +15,7 @@ namespace ChatApp
             return new ChatServer(server);
         }
 
-        public ChatServer(NetworkServer<ChatRequest, ChatResponse> networkServer)
+        public ChatServer(INetworkServer<ChatRequest, ChatResponse> networkServer)
         {
             server = networkServer;
         }
