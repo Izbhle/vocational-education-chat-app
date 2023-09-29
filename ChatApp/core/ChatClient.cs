@@ -17,16 +17,12 @@ namespace ChatApp
                 requestType = ChatRequestType.RegisterClient,
                 message = id
             };
-            var disconnectRequest = new ChatRequest
-            {
-                requestType = ChatRequestType.DisconnectClient,
-            };
             var client = new NetworkClient<ChatRequest, ChatResponse>(
                 id,
                 ipAddress,
                 port,
                 registerRequest,
-                disconnectRequest
+                ChatClientTransmissions.disconnectRequest
             );
             return new ChatClient(id, client, callback);
         }
@@ -62,8 +58,7 @@ namespace ChatApp
 
         public void RequestClientList()
         {
-            var request = new ChatRequest { requestType = ChatRequestType.ClientList, };
-            client.SendServerRequest(request);
+            client.SendServerRequest(ChatClientTransmissions.getClientListRequest);
         }
 
         private Action<ITransmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(
