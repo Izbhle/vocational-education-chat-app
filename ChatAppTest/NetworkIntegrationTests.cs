@@ -50,18 +50,17 @@ public class NetworkIntegrationTests
     {
         int port = 1240;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
 
         Assert.AreEqual(server, handlers.serverHandlerServer);
@@ -77,19 +76,18 @@ public class NetworkIntegrationTests
     {
         int port = 1241;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
@@ -105,19 +103,18 @@ public class NetworkIntegrationTests
     {
         int port = 1242;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
@@ -138,19 +135,18 @@ public class NetworkIntegrationTests
     {
         int port = 1243;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
@@ -172,19 +168,18 @@ public class NetworkIntegrationTests
     {
         int port = 1244;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
@@ -205,19 +200,18 @@ public class NetworkIntegrationTests
     {
         int port = 1245;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
@@ -250,19 +244,18 @@ public class NetworkIntegrationTests
     {
         int port = 1246;
         var handlers = new TestHandlers();
-        var server = new NetworkServer<string, string>(ip, port, (s) => handlers.ServerHandler(s));
-        server.Start();
+        var server = new NetworkServer<string, string>(ip, port);
+        server.Start(handlers.ServerHandler);
         Thread.Sleep(20);
         var client = new NetworkClient<string, string>(
             id,
             ip,
             port,
-            (c) => handlers.ClientHandler(c),
             registerTransmission,
             disconnectTransmission
         );
         Thread.Sleep(20);
-        client.Start();
+        client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);

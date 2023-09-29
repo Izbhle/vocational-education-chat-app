@@ -15,7 +15,13 @@ namespace Network
         /// <summary>
         /// Starts the stream and the receiver thread.
         /// </summary>
-        public abstract void Start();
+        /// <param name="transmissionHandlerFactory">Transmission Handler</param>
+        public void Start(
+            Func<
+                NetworkClient<Req, Res>,
+                Action<ITransmission<Req, Res>?>
+            > transmissionHandlerFactory
+        );
 
         /// <summary>
         /// Safely closes all connections. This also puts tcpClient into an unusuable state, only use this when you mean to dispose the client

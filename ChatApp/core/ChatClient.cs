@@ -4,39 +4,44 @@ namespace ChatApp
 {
     public class ChatClient : IChatClient
     {
-        private readonly NetworkClient<ChatRequest, ChatResponse> client;
+        private readonly INetworkClient<ChatRequest, ChatResponse> client;
         public IChatRequestStore messagesStore { get; }
         public List<string> availableClients { get; set; }
 
         public Action callback { get; }
 
-        public ChatClient(string id, string ipAddress, int port, Action updateCallback)
+        public static ChatClient CreateNew(string id, string ipAddress, int port, Action callback)
         {
-            availableClients = new List<string>();
-            callback = updateCallback;
             var registerRequest = new ChatRequest
             {
                 requestType = ChatRequestType.RegisterClient,
                 message = id
             };
-            var disconnectRequest = new ChatRequest
-            {
-                requestType = ChatRequestType.DisconnectClient,
-            };
-            client = new NetworkClient<ChatRequest, ChatResponse>(
+            var client = new NetworkClient<ChatRequest, ChatResponse>(
                 id,
                 ipAddress,
                 port,
-                TransmissionHandlerWrapper,
                 registerRequest,
-                disconnectRequest
+                ChatClientTransmissions.disconnectRequest
             );
+            return new ChatClient(id, client, callback);
+        }
+
+        public ChatClient(
+            string id,
+            INetworkClient<ChatRequest, ChatResponse> networkClient,
+            Action updateCallback
+        )
+        {
+            availableClients = new List<string>();
+            callback = updateCallback;
+            client = networkClient;
             messagesStore = new ChatRequestStore(id);
         }
 
         public void Start()
         {
-            client.Start();
+            client.Start(TransmissionHandlerWrapper);
         }
 
         public void SendMessage(string target, string message)
@@ -53,12 +58,11 @@ namespace ChatApp
 
         public void RequestClientList()
         {
-            var request = new ChatRequest { requestType = ChatRequestType.ClientList, };
-            client.SendServerRequest(request);
+            client.SendServerRequest(ChatClientTransmissions.getClientListRequest);
         }
 
         private Action<ITransmission<ChatRequest, ChatResponse>?> TransmissionHandlerWrapper(
-            NetworkClient<ChatRequest, ChatResponse> client
+            INetworkClient<ChatRequest, ChatResponse> client
         )
         {
             return (transmission) =>
