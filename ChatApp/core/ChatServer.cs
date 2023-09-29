@@ -16,6 +16,10 @@ namespace ChatApp
                 port,
                 TransmissionHandlerWrapper
             );
+        }
+
+        public void Start()
+        {
             server.Start();
         }
 

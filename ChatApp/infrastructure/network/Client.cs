@@ -24,7 +24,7 @@ namespace Network
         /// <summary>
         /// Serves as the network connection
         /// </summary>
-        private TcpClient tcpClient;
+        private TcpClient? tcpClient;
 
         /// <summary>
         /// All communication is done via this single stream
@@ -108,7 +108,18 @@ namespace Network
         {
             try
             {
-                if (!tcpClient.Connected) // Reinitialize client on disconnect
+                if (tcpClient != null)
+                {
+                    if (!tcpClient.Connected) // Reinitialize client on disconnect
+                    {
+                        if (port == null || ip == null)
+                        {
+                            return false;
+                        }
+                        tcpClient = new TcpClient(ip, (int)port);
+                    }
+                }
+                else
                 {
                     if (port == null || ip == null)
                     {
@@ -166,7 +177,7 @@ namespace Network
                 SendServerRequest(disconnectRequest);
             Thread.Sleep(200);
             stream?.Dispose();
-            tcpClient.Dispose();
+            tcpClient?.Dispose();
             return;
         }
 
