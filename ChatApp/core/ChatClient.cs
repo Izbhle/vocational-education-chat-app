@@ -32,6 +32,10 @@ namespace ChatApp
                 disconnectRequest
             );
             messagesStore = new ChatRequestStore(id);
+        }
+
+        public void Start()
+        {
             client.Start();
         }
 

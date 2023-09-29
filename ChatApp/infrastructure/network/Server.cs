@@ -10,11 +10,14 @@ namespace Network
     /// <typeparam name="Res">Response</typeparam>
     public class NetworkServer<Req, Res> : INetworkServer<Req, Res>
     {
+        private readonly string ip;
+        private readonly int port;
+
         /// <summary>
         /// Reference all clients by clientId. Used to Relay Transmissions.
         /// </summary>
         private readonly Dictionary<string, INetworkClient<Req, Res>> clients;
-        private readonly ClientConnectionListener clientConnectionListener;
+        private ClientConnectionListener? clientConnectionListener;
 
         /// <summary>
         /// Factory function used to inject the NetworkClient object into the Handler Bus
@@ -33,17 +36,17 @@ namespace Network
         /// <param name="transmissionHandlerServerFactory">Factory function used to inject the NetworkServer object into the Handler Bus</param>
         public NetworkServer(
             string ipAddress,
-            int port,
+            int portNumber,
             Func<
                 NetworkServer<Req, Res>,
                 Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
             > transmissionHandlerServerFactory
         )
         {
+            ip = ipAddress;
+            port = portNumber;
             transmissionHandlerClientFactory = transmissionHandlerServerFactory(this);
             clients = new Dictionary<string, INetworkClient<Req, Res>>();
-            var tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
-            clientConnectionListener = new ClientConnectionListener(tcpListener, RegisterNewClient);
         }
 
         /// <summary>
@@ -126,9 +129,11 @@ namespace Network
 
         /// <summary>
         /// /// Starts the TcpListener to start accepting incoming connections
-        /// </summary>
+        /// /// </summary>
         public void Start()
         {
+            var tcpListener = new TcpListener(IPAddress.Parse(ip), port);
+            clientConnectionListener = new ClientConnectionListener(tcpListener, RegisterNewClient);
             clientConnectionListener.StartListening();
         }
 
