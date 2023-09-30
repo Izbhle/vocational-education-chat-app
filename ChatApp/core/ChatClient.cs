@@ -44,6 +44,11 @@ namespace ChatApp
             client.Start(TransmissionHandlerWrapper);
         }
 
+        public void Dispose()
+        {
+            client.Dispose();
+        }
+
         public void SendMessage(string target, string message)
         {
             var request = new ChatRequest

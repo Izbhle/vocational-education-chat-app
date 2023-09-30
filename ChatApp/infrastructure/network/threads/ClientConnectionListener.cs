@@ -27,7 +27,7 @@ namespace Network
             // TODO: Add a lock
             try
             {
-                while (true)
+                while (listenerLock)
                 {
                     client = listener.AcceptTcpClient();
                     action(client);
@@ -35,6 +35,17 @@ namespace Network
             }
             catch (SocketException) { }
             // listener.Stop();
+        }
+
+        private bool listenerLock;
+
+        /// <summary>
+        /// Savely stop the tcplistener
+        /// </summary>
+        public void Stop()
+        {
+            listenerLock = false;
+            listener.Stop();
         }
 
         /// <summary>
@@ -45,6 +56,7 @@ namespace Network
         public ClientConnectionListener(TcpListener tcpListener, Action<TcpClient> registerAction)
         {
             listener = tcpListener;
+            listenerLock = false;
             action = registerAction;
             thread = new Thread(new ThreadStart(Listen));
         }
@@ -54,6 +66,7 @@ namespace Network
         /// </summary>
         public void StartListening()
         {
+            listenerLock = true;
             thread.Start();
         }
     }

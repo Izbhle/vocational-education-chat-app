@@ -13,14 +13,9 @@ namespace ChatApp
         {
             Console.WriteLine("Starting prototype...");
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-            // var db = new NotenDB("test.db", "src/infrastructure/database/sqlite/migrations");
-            // var sessionManager = new SessionManager(db);
-            // var operations = new OperationsController(db);
-            // var entrypoint = new ConsoleEntrypoint(sessionManager, operations);
-            // entrypoint.Start();
         }
 
         public static AppBuilder BuildAvaloniaApp() =>
-            AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
+            AppBuilder.Configure<ChatApp>().UsePlatformDetect().LogToTrace().UseReactiveUI();
     }
 }
