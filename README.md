@@ -20,6 +20,11 @@ The `terminal.integrated.*` options in `.vscode/settings.json` need to be remove
 
 The flatpak version needs sdks for `mono6` and `dotnet7` to be installed.
 
+## Integration Tests
+
+Tests for this project include automated integration tests to verify network functionality.
+Those tests need access to the following ports: `1240-1250`
+
 ## Test Coverage
 Generate a test coverage report by running the script.
 ```sh
