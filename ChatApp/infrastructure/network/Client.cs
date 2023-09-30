@@ -160,7 +160,7 @@ namespace Network
                 SendServerRequest(disconnectRequest);
             Thread.Sleep(200);
             transmissionReceiver?.Stop();
-            tcpClient?.Dispose();
+            tcpClient?.Close();
             return;
         }
 
@@ -270,7 +270,7 @@ namespace Network
                 }
             }
             byte[] rawData = Encoding.UTF8.GetBytes(data); // data send as bytes
-            stream!.Write(rawData, 0, rawData.Length);
+            stream?.Write(rawData, 0, rawData.Length);
             // Console.WriteLine("Sent    : " + data);
             return true;
         }

@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Views
 {
-    public partial class MainWindow : Window
+    public partial class ClientWindow : Window
     {
-        public MainWindow()
+        public ClientWindow()
         {
             InitializeComponent();
         }

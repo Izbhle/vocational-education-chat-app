@@ -20,16 +20,19 @@ namespace Network
         private void ReadStream()
         {
             byte[] bytes = new byte[4096];
-            string? dataAsString;
+            string? dataAsString = null;
             TransmissionWrapper<Req, Res> transmission;
 
-            int numberOfBytes;
+            int numberOfBytes = 0;
             while (streamLock)
             {
                 numberOfBytes = stream.Read(bytes, 0, bytes.Length);
-                dataAsString = Encoding.UTF8.GetString(bytes, 0, numberOfBytes);
-                transmission = new TransmissionWrapper<Req, Res>(dataAsString);
-                transmissionHandler(transmission.data);
+                if (numberOfBytes != 0)
+                {
+                    dataAsString = Encoding.UTF8.GetString(bytes, 0, numberOfBytes);
+                    transmission = new TransmissionWrapper<Req, Res>(dataAsString);
+                    transmissionHandler(transmission.data);
+                }
             }
         }
 
@@ -45,6 +48,7 @@ namespace Network
         )
         {
             stream = tcpStream;
+            streamLock = false;
             transmissionHandler = transmissionAction;
             thread = new Thread(new ThreadStart(ReadStream));
         }
