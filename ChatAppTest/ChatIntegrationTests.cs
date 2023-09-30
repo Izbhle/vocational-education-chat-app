@@ -52,5 +52,8 @@ public class ChatIntegrationTests
                 .First()!
                 .response!.requestType!.Equals(ChatRequestType.Message)
         );
+        clientA.Dispose();
+        clientB.Dispose();
+        server.Dispose();
     }
 }
