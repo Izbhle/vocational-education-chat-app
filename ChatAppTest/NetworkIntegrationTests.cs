@@ -66,9 +66,6 @@ public class NetworkIntegrationTests
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(registerTransmission, handlers.serverHandlerTransmission?.request);
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -86,16 +83,11 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
-
         Assert.IsTrue(server.GetListOfClientIds().Contains(id));
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -113,7 +105,6 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -122,12 +113,8 @@ public class NetworkIntegrationTests
         string message = "message";
         client.SendClientRequest(id, message);
         Thread.Sleep(20);
-
         Assert.AreEqual(server.GetClient(id), handlers.serverHandlerClient);
         Assert.AreEqual(message, handlers.serverHandlerTransmission?.request);
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -145,7 +132,6 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -158,9 +144,6 @@ public class NetworkIntegrationTests
 
         Assert.AreEqual(client, handlers.clientHandlerClient);
         Assert.AreEqual(message, handlers.clientHandlerTransmission?.request);
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -178,13 +161,10 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
         server.RegisterClientAction(handlers.serverHandlerClient, id);
-        Thread.Sleep(20);
-
         Assert.IsTrue(server.GetListOfClientIds().Contains(id));
         client.Dispose();
         Thread.Sleep(20);
@@ -192,7 +172,6 @@ public class NetworkIntegrationTests
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(disconnectTransmission, handlers.serverHandlerTransmission?.request);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -210,7 +189,6 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -234,9 +212,6 @@ public class NetworkIntegrationTests
         Assert.AreEqual(server, handlers.serverHandlerServer);
         Assert.IsNotNull(handlers.serverHandlerClient);
         Assert.AreEqual(response, handlers.serverHandlerTransmission?.response);
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 
     [TestMethod]
@@ -254,7 +229,6 @@ public class NetworkIntegrationTests
             registerTransmission,
             disconnectTransmission
         );
-        Thread.Sleep(20);
         client.Start(handlers.ClientHandler);
         Thread.Sleep(20);
         Assert.IsNotNull(handlers.serverHandlerClient);
@@ -268,8 +242,5 @@ public class NetworkIntegrationTests
 
         Assert.AreEqual(client, handlers.clientHandlerClient);
         Assert.AreEqual(response, handlers.clientHandlerTransmission?.response);
-        client.Dispose();
-        Thread.Sleep(20);
-        server.Dispose();
     }
 }
