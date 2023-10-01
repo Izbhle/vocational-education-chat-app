@@ -137,6 +137,7 @@ namespace Network
         /// </summary>
         public void Dispose()
         {
+            clientConnectionListener?.Stop();
             clients.ToList().ForEach(c => c.Value.Dispose());
         }
     }

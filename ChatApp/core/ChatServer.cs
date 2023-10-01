@@ -25,6 +25,11 @@ namespace ChatApp
             server.Start(TransmissionHandlerWrapper);
         }
 
+        public void Dispose()
+        {
+            server.Dispose();
+        }
+
         public ChatResponse CreateListOfClientsResponse()
         {
             List<string> clients = server.GetListOfClientIds();

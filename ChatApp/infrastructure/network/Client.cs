@@ -119,8 +119,7 @@ namespace Network
                     stream = tcpClient.GetStream();
                     transmissionReceiver = new TransmissionReceiver<Req, Res>(
                         stream,
-                        transmissionHandler!,
-                        CloseStreamAction
+                        transmissionHandler!
                     );
                     transmissionReceiver.StartListening();
                 }
@@ -134,17 +133,6 @@ namespace Network
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Callback to execute on the client when the stream closes in the receiver thread.
-        /// This safely shuts down the stream, in order to cleanly restart it later.
-        /// </summary>
-        private void CloseStreamAction()
-        {
-            transmissionReceiver = null;
-            stream = null;
-            closeStreamServerAction?.Invoke(Id); // Also execute server callback when it exists.
         }
 
         /// <summary>
@@ -167,11 +155,12 @@ namespace Network
         /// </summary>
         public void Dispose()
         {
+            closeStreamServerAction?.Invoke(Id); // Also execute server callback when it exists.
             if (disconnectRequest != null)
                 SendServerRequest(disconnectRequest);
             Thread.Sleep(200);
-            stream?.Dispose();
-            tcpClient?.Dispose();
+            transmissionReceiver?.Stop();
+            tcpClient?.Close();
             return;
         }
 
@@ -281,7 +270,7 @@ namespace Network
                 }
             }
             byte[] rawData = Encoding.UTF8.GetBytes(data); // data send as bytes
-            stream!.Write(rawData, 0, rawData.Length);
+            stream?.Write(rawData, 0, rawData.Length);
             // Console.WriteLine("Sent    : " + data);
             return true;
         }

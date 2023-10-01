@@ -12,11 +12,6 @@ namespace Network
     {
         private readonly NetworkStream stream;
         private readonly Action<ITransmission<Req, Res>?> transmissionHandler;
-
-        /// <summary>
-        /// Action to execute when the stream closes
-        /// </summary>
-        private readonly Action? closeStreamAction;
         private readonly Thread thread;
 
         /// <summary>
@@ -24,22 +19,26 @@ namespace Network
         /// </summary>
         private void ReadStream()
         {
-            byte[] bytes = new byte[256];
-            string? data;
+            byte[] bytes = new byte[4096];
+            string? dataAsString;
             TransmissionWrapper<Req, Res> transmission;
 
-            int i;
+            int numberOfBytes;
             try
             {
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0) // Read incoming data, when the data is empty or the commection is closed the loop exits
+                while (streamLock)
                 {
-                    data = Encoding.UTF8.GetString(bytes, 0, i); // Bytes needs to be converted into UTF8 string
-                    transmission = new TransmissionWrapper<Req, Res>(data);
-                    transmissionHandler(transmission.data);
+                    numberOfBytes = stream.Read(bytes, 0, bytes.Length);
+                    if (numberOfBytes != 0)
+                    {
+                        dataAsString = Encoding.UTF8.GetString(bytes, 0, numberOfBytes);
+                        transmission = new TransmissionWrapper<Req, Res>(dataAsString);
+                        transmissionHandler(transmission.data);
+                    }
                 }
             }
             catch (IOException) { }
-            closeStreamAction?.Invoke();
+            ;
         }
 
         /// <summary>
@@ -50,13 +49,12 @@ namespace Network
         /// <param name="closeAction">Action to execute when the stream closes</param>
         public TransmissionReceiver(
             NetworkStream tcpStream,
-            Action<ITransmission<Req, Res>?> transmissionAction,
-            Action? closeAction
+            Action<ITransmission<Req, Res>?> transmissionAction
         )
         {
             stream = tcpStream;
+            streamLock = false;
             transmissionHandler = transmissionAction;
-            closeStreamAction = closeAction;
             thread = new Thread(new ThreadStart(ReadStream));
         }
 
@@ -65,7 +63,19 @@ namespace Network
         /// </summary>
         public void StartListening()
         {
+            streamLock = true;
             thread.Start();
+        }
+
+        private bool streamLock;
+
+        /// <summary>
+        /// Savely stop the stream
+        /// </summary>
+        public void Stop()
+        {
+            streamLock = false;
+            stream.Close();
         }
     }
 }
