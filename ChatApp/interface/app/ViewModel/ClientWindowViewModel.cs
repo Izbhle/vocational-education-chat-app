@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace ViewModels
 {
-    public class ClientWindowViewModel : ViewModelBase
+    public class ChatWindowViewModel : ViewModelBase
     {
         public string Name { get; }
         public readonly ChatAppService services;
@@ -87,7 +87,7 @@ namespace ViewModels
             services.Exit();
         }
 
-        public ClientWindowViewModel(ChatAppService service)
+        public ChatWindowViewModel(ChatAppService service)
         {
             services = service;
             services.OnTransmissionActions.Add(() => this.RaisePropertyChanged(nameof(Messages)));

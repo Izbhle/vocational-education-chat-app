@@ -26,9 +26,9 @@ namespace ChatApp
                     desktop.MainWindow?.Close();
                 });
                 var loginWindow = desktop.MainWindow;
-                desktop.MainWindow = new ClientWindow
+                desktop.MainWindow = new ChatWindow
                 {
-                    DataContext = new ClientWindowViewModel(chatAppService),
+                    DataContext = new ChatWindowViewModel(chatAppService),
                 };
                 loginWindow?.Close();
             }
