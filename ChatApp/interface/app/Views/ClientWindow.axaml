@@ -3,7 +3,7 @@
         xmlns:vm="using:ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
         x:CompileBindings="True"
 		x:DataType="vm:ClientWindowViewModel"
         x:Class="Views.ClientWindow"
@@ -16,42 +16,132 @@
         <vm:ClientWindowViewModel/>
     </Design.DataContext>
 
-	<StackPanel>
-		<StackPanel>
-			<DockPanel>
-				<TextBlock>Chatting as <TextBlock Text="{Binding Name}"/></TextBlock>
-				<Button Command="{Binding Exit}">Disconnect</Button>
-			</DockPanel>
-			<DockPanel>
-				<StackPanel>
-					<ListBox ItemsSource="{Binding AvailableClients}" SelectedItem="{Binding Target}">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding}"/>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
-					<Button Command="{Binding RefreshClientList}">Refresh</Button>
-				</StackPanel>
-				<StackPanel>
-					<ItemsControl ItemsSource="{Binding Messages}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<DockPanel>
-									<TextBlock Text="{Binding request.requestTimeId}"/>
-									<TextBlock Text=": "/>
-									<TextBlock Text="{Binding senderId}"/>
-									<TextBlock Text=": "/>
+	<Grid Background="LightGray">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="70"/>
+        <RowDefinition Height="*"/>
+		<RowDefinition Height="100"/>
+      </Grid.RowDefinitions>
+		<DockPanel
+		 	Grid.Row="0" Grid.Column="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Margin="15"
+		>
+			<TextBlock
+				Classes="h1"
+				FontSize="24"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+			>Chatting as <TextBlock Text="{Binding Name}"/></TextBlock>
+			<Button  
+				HorizontalAlignment="Right"
+				VerticalAlignment="Stretch"
+				Width="200"
+				Command="{Binding Exit}"
+			>
+				Disconnect
+			</Button>
+		</DockPanel>
+		<DockPanel
+			Grid.Row="1" Grid.Column="0"
+		>
+			<ScrollViewer
+				Margin="15"
+				Padding="5"
+				Background="White"
+				BorderBrush="Black"
+				BorderThickness="2"
+				Width="200"
+			>
+				<ListBox 
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Top"
+					ItemsSource="{Binding AvailableClients}"
+					SelectedItem="{Binding Target}"
+				>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding}"/>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</ScrollViewer>
+
+			<ScrollViewer
+				Margin="15"
+				Padding="5"
+				Background="White"
+				BorderBrush="Black"
+				BorderThickness="2"
+			>
+				<ItemsControl
+					VerticalAlignment="Bottom"
+					ItemsSource="{Binding Messages}"
+				>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel
+								Margin="5"
+							>
+								<TextBlock Text="{Binding senderId}"/>
+								<Border
+									Background="LightGray"
+									Padding="5"
+									CornerRadius="5"
+									VerticalAlignment="Stretch"
+									HorizontalAlignment="Left"
+								>
 									<TextBlock Text="{Binding request.message}"/>
-								</DockPanel>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+								</Border>
+								<TextBlock Text="{Binding request.requestTimeId}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</DockPanel>
+
+		<Border
+			Grid.Row="2" Grid.Column="0"
+			Background="LightGray"
+			VerticalAlignment="Stretch"
+		>
+			<Grid 
+				ColumnDefinitions="230,*,230"	
+			>
+				<Button
+					Grid.Row="0" Grid.Column="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="15"
+					Command="{Binding RefreshClientList}"
+
+				>
+					Refresh Users
+				</Button>
+				<StackPanel
+					Grid.Row="0" Grid.Column="1"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="15"
+				>
 					<TextBlock>Errors</TextBlock>
-					<TextBox Text="{Binding Message}"/>
-					<Button Command="{Binding Send}">Send</Button>
+					<TextBox
+						Background="White"
+						Text="{Binding Message}"
+					/>
 				</StackPanel>
-			</DockPanel>
-		</StackPanel>
-	</StackPanel>
+				<Button
+					Grid.Row="0" Grid.Column="2"
+					Command="{Binding Send}"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="15"
+				>
+					Send
+				</Button>
+			</Grid>
+		</Border>
+	</Grid>
 </Window>

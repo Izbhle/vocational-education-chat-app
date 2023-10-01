@@ -20,20 +20,25 @@ namespace Network
         private void ReadStream()
         {
             byte[] bytes = new byte[4096];
-            string? dataAsString = null;
+            string? dataAsString;
             TransmissionWrapper<Req, Res> transmission;
 
-            int numberOfBytes = 0;
-            while (streamLock)
+            int numberOfBytes;
+            try
             {
-                numberOfBytes = stream.Read(bytes, 0, bytes.Length);
-                if (numberOfBytes != 0)
+                while (streamLock)
                 {
-                    dataAsString = Encoding.UTF8.GetString(bytes, 0, numberOfBytes);
-                    transmission = new TransmissionWrapper<Req, Res>(dataAsString);
-                    transmissionHandler(transmission.data);
+                    numberOfBytes = stream.Read(bytes, 0, bytes.Length);
+                    if (numberOfBytes != 0)
+                    {
+                        dataAsString = Encoding.UTF8.GetString(bytes, 0, numberOfBytes);
+                        transmission = new TransmissionWrapper<Req, Res>(dataAsString);
+                        transmissionHandler(transmission.data);
+                    }
                 }
             }
+            catch (IOException) { }
+            ;
         }
 
         /// <summary>
