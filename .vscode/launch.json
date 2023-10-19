@@ -5,20 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": ".NET Core Launch (Client)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ChatApp/bin/Debug/net7.0/ChatApp.dll",
+            "program": "${workspaceFolder}/ChatAppClient/bin/Debug/net7.0/ChatAppClient.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Attach",
+            "name": ".NET Core Launch (Server)",
             "type": "coreclr",
-            "request": "attach"
-        }
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/ChatAppServer/bin/Debug/net7.0/ChatAppServer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
     ]
 }

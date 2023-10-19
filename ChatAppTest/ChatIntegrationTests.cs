@@ -1,6 +1,7 @@
-using ChatApp;
+using Transmissions;
 
-namespace Network;
+using ChatAppClient;
+using ChatAppServer;
 
 [TestClass]
 public class ChatIntegrationTests
@@ -8,7 +9,7 @@ public class ChatIntegrationTests
     private readonly string ip = "127.0.0.1";
 
     [TestMethod]
-    public void ChatClientsCanComunicate()
+    public void ChatClientsCanCommunicate()
     {
         string message = "message";
         int port = 1247;

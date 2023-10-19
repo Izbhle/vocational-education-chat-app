@@ -7,9 +7,9 @@
     "omnisharp.organizeImportsOnFormat": true,
     "razor.format.enable": true,
     "csharp.debug.console": "integratedTerminal",
-    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.linux": "flatpak-spawn",
     "terminal.integrated.profiles.linux": {
-        "bash": {
+        "flatpak-spawn": {
             "path": "/usr/bin/flatpak-spawn",
             "icon": "terminal-bash",
             "args": [
@@ -17,6 +17,10 @@
                 "--env=PATH=/app/bin:/usr/bin:/home/fritz/.dotnet/tools:/usr/lib/sdk/dotnet7/bin",
                 "bash"
             ]
+        },
+        "bash": {
+            "path": "bash",
+            "icon": "terminal-bash",
         }
     },
     "csharp.format.enable": true
