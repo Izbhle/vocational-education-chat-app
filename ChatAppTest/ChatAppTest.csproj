@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>ChatAppTest</RootNamespace>
@@ -18,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Configuration="Debug" Include="../ChatApp/ChatApp.csproj" />
+    <ProjectReference Configuration="Debug" Include="../ChatAppClient/ChatAppClient.csproj" />
+    <ProjectReference Configuration="Debug" Include="../lib/Network/Network.csproj" />
+    <ProjectReference Configuration="Debug" Include="../lib/Transmissions/Transmissions.csproj" />
   </ItemGroup>
-
 </Project>

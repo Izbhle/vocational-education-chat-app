@@ -1,7 +1,8 @@
 using System.Text.Json;
 using Network;
+using Transmissions;
 
-namespace ChatApp;
+namespace ChatAppServer;
 
 [TestClass]
 public class ChatServerUnitTests

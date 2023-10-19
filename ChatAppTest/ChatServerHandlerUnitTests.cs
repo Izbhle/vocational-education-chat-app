@@ -1,6 +1,7 @@
 using Network;
+using Transmissions;
 
-namespace ChatApp;
+namespace ChatAppServer;
 
 [TestClass]
 public class ChatServerHandlerUnitTests

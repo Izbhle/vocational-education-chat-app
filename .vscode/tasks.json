@@ -7,9 +7,6 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ChatApp/ChatApp.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -19,7 +16,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ChatApp/ChatApp.csproj",
+                "${workspaceFolder}/ChatAppClient/ChatAppClient.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +30,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/ChatApp/ChatApp.csproj"
+                "${workspaceFolder}/ChatAppClient/ChatAppClient.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
