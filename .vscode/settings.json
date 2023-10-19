@@ -7,7 +7,7 @@
     "omnisharp.organizeImportsOnFormat": true,
     "razor.format.enable": true,
     "csharp.debug.console": "integratedTerminal",
-    "terminal.integrated.defaultProfile.linux": "flatpak-spawn",
+    "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.profiles.linux": {
         "flatpak-spawn": {
             "path": "/usr/bin/flatpak-spawn",

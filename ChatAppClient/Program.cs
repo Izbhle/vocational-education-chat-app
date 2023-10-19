@@ -1,6 +1,5 @@
 ﻿﻿using Avalonia.ReactiveUI;
 using Avalonia;
-using ChatAppClient;
 
 namespace ChatAppClient
 {

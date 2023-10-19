@@ -39,7 +39,7 @@ namespace ViewModels
             IpAddress = "127.0.0.1";
             Port = "1234";
             Name = service.Name;
-            IsLaunchServer = true;
+            IsLaunchServer = false;
             services = service;
         }
     }

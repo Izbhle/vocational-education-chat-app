@@ -35,18 +35,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/ChatAppServer/ChatAppServer.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "test",
             "command": "dotnet",
             "type": "process",
