@@ -4,8 +4,8 @@ namespace ChatAppClient
 {
     public class ChatAppService
     {
-        public ChatClient? Client { get; set; }
-        public ChatServer? Server { get; set; }
+        public IChatClient? Client { get; set; }
+        public IChatServer? Server { get; set; }
         public string Name { get; set; } = "Chose your Name";
         public List<Action> OnTransmissionActions { get; set; } = new List<Action>();
 
