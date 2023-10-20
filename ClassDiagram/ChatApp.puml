@@ -1,0 +1,262 @@
+@startuml
+'skinparam linetype polyline
+'skinparam linetype ortho
+skinparam wrapWidth 500
+skinparam maxMessageSize 50
+left to right direction
+together {
+    class ChatResponse {
+        + requestTimeId : DateTime? <<get>> <<set>>
+        + error : ChatResponseError? <<get>> <<set>>
+        + requestType : ChatRequestType? <<get>> <<set>>
+        + message : string? <<get>> <<set>>
+    }
+    ChatResponse *-- ChatRequestType
+    ChatResponse *-- ChatResponseError
+    class ChatRequest {
+        + requestTimeId : DateTime? <<get>> <<set>>
+        + requestType : ChatRequestType? <<get>> <<set>>
+        + message : string? <<get>> <<set>>
+    }
+    ChatRequest *-- ChatRequestType
+    class ChatTransmission {
+        + transmissionType : TransmissionType? <<get>> <<set>>
+        + targetType : TargetType? <<get>> <<set>>
+        + receiverId : string? <<get>> <<set>>
+        + senderId : string? <<get>> <<set>>
+        + request : ChatRequest? <<get>> <<set>>
+        + response : ChatResponse? <<get>> <<set>>
+    }
+    ChatTransmission *-- ChatResponse
+    ChatTransmission *-- ChatRequest
+    "ITransmission" "<ChatRequest,ChatResponse>" <|-- ChatTransmission
+    enum ChatRequestType {
+        RegisterClient,
+        DisconnectClient,
+        ClientList,
+        Message,
+    }
+    enum ChatResponseError {
+        OperationNotSupported,
+        MalformedRequest,
+        ReceiverUnknown,
+    }
+    enum TransmissionType {
+        request,
+        response,
+    }
+    enum TargetType {
+        server,
+        client,
+    }
+    interface "ITransmission"<Req,Res> {
+    + transmissionType : TransmissionType? <<get>> <<set>>
+    + targetType : TargetType? <<get>> <<set>>
+    + receiverId : string? <<get>> <<set>>
+    + senderId : string? <<get>> <<set>>
+    + request : Req? <<get>> <<set>>
+    + response : Res? <<get>> <<set>>
+    }
+    ITransmission *-- TransmissionType
+    ITransmission *-- TargetType
+    class "Transmission"<Req,Res> {
+        + transmissionType : TransmissionType? <<get>> <<set>>
+        + targetType : TargetType? <<get>> <<set>>
+        + receiverId : string? <<get>> <<set>>
+        + senderId : string? <<get>> <<set>>
+        + request : Req? <<get>> <<set>>
+        + response : Res? <<get>> <<set>>
+    }
+    class "TransmissionWrapper"<Req,Res> {
+        + jsonString : string
+        + data : ITransmission<Req, Res>?
+        + TransmissionWrapper(transmission:ITransmission<Req, Res>?)
+        + TransmissionWrapper(json:string)
+    }
+    TransmissionWrapper *-- ITransmission
+    "ITransmission" "<Req,Res>" <|-- "Transmission"
+}
+together {
+    class "NetworkServer"<Req,Res> {
+        + NetworkServer(ipAddress:string, portNumber:int)
+        + GetListOfClientIds() : List<string>
+        + GetClient(id:string?) : INetworkClient<Req, Res>?
+        + SendResponseToAllClients(response:Res) : void
+        + RegisterClientAction(client:INetworkClient<Req, Res>, id:string) : void
+        + DisconnectClientAction(id:string?) : void
+        + Start(transmissionHandlerServerFactory:Func<
+                    NetworkServer<Req, Res>,
+                    Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+                >) : void
+        + Dispose() : void
+    }
+    NetworkServer "Dictionary<string,INetworkClient>" --> "clients" INetworkClient
+    "INetworkServer" "<Req,Res>" <|-- "NetworkServer"
+    interface "INetworkServer"<Req,Res> {
+        + {abstract} GetListOfClientIds() : List<string>
+        + {abstract} GetClient(id:string?) : INetworkClient<Req, Res>?
+        + {abstract} SendResponseToAllClients(response:Res) : void
+        + {abstract} RegisterClientAction(client:INetworkClient<Req, Res>, id:string) : void
+        + {abstract} DisconnectClientAction(id:string?) : void
+        + Start(transmissionHandlerServerFactory:Func<
+                    NetworkServer<Req, Res>,
+                    Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+                >) : void
+        + {abstract} Dispose() : void
+    }
+    class ClientConnectionListener {
+        + Stop() : void
+        + ClientConnectionListener(tcpListener:TcpListener, registerAction:Action<TcpClient>)
+        + StartListening() : void
+    }
+}
+together {
+    class "TransmissionReceiver"<Req,Res> {
+        + TransmissionReceiver(tcpStream:NetworkStream, transmissionAction:Action<ITransmission<Req, Res>?>)
+        + StartListening() : void
+        + Stop() : void
+    }
+    class "NetworkClient"<Req,Res> {
+        + Id : string? <<get>> <<set>>
+        + NetworkClient(initialId:string, ipAddress:string, networkPort:int, serverRegisterRequest:Req, serverDisconnectRequest:Req)
+        + NetworkClient(client:TcpClient, streamCloseAction:Action<string?>)
+        + Start(transmissionHandlerFactory:Func<
+                    NetworkClient<Req, Res>,
+                    Action<ITransmission<Req, Res>?>
+                >) : void
+        + Dispose() : void
+        + TrySendTransmission(transmission:ITransmission<Req, Res>) : bool
+        + SendClientRequest(receiverId:string, request:Req) : ITransmission<Req, Res>?
+        + SendServerRequest(request:Req) : ITransmission<Req, Res>?
+        + SendResponse(oldTransmission:ITransmission<Req, Res>, response:Res) : ITransmission<Req, Res>?
+    }
+    "INetworkClient" "<Req,Res>" <|-- "NetworkClient"
+    interface "INetworkClient"<Req,Res> {
+        + Id : string? <<get>> <<set>>
+        + Start(transmissionHandlerFactory:Func<
+                    NetworkClient<Req, Res>,
+                    Action<ITransmission<Req, Res>?>
+                >) : void
+        + {abstract} Dispose() : void
+        + {abstract} TrySendTransmission(transmission:ITransmission<Req, Res>) : bool
+        + {abstract} SendClientRequest(receiverId:string, request:Req) : ITransmission<Req, Res>?
+        + {abstract} SendServerRequest(request:Req) : ITransmission<Req, Res>?
+        + {abstract} SendResponse(oldTransmission:ITransmission<Req, Res>, response:Res) : ITransmission<Req, Res>?
+    }
+}
+together {
+    class ChatServerHandler {
+        + {static} TransmissionHandler(chatServer:IChatServer, server:INetworkServer<ChatRequest, ChatResponse>, client:INetworkClient<ChatRequest, ChatResponse>, transmission:ITransmission<ChatRequest, ChatResponse>?) : void
+    }
+    interface IChatServer {
+        + {abstract} Start() : void
+        + Dispose() : void
+        + {abstract} CreateListOfClientsResponse() : ChatResponse
+    }
+    class ChatServer {
+        - server : INetworkServer<ChatRequest, ChatResponse>
+        + {static} CreateNew(ipAddress:string, port:int) : ChatServer
+        + ChatServer(networkServer:INetworkServer<ChatRequest, ChatResponse>)
+        + Start() : void
+        + Dispose() : void
+        + CreateListOfClientsResponse() : ChatResponse
+    }
+    ChatServer "server" <-- "<ChatRequest, ChatResponse>" INetworkServer
+    IChatServer <|-- ChatServer
+}
+class Program {
+    + {static} Main(args:string[]) : void
+}
+class ChatClientTransmissions {
+}
+ChatClientTransmissions o-> "disconnectRequest" ChatRequest
+ChatClientTransmissions o-> "getClientListRequest" ChatRequest
+together {
+    class ChatClientHandler {
+        + {static} TransmissionHandler(chatClient:IChatClient, client:INetworkClient<ChatRequest, ChatResponse>, transmission:ITransmission<ChatRequest, ChatResponse>?) : void
+    }
+    class ChatClient {
+        - client : INetworkClient<ChatRequest, ChatResponse>
+        + {static} CreateNew(id:string, ipAddress:string, port:int, callback:Action) : ChatClient
+        + ChatClient(id:string, networkClient:INetworkClient<ChatRequest, ChatResponse>, updateCallback:Action)
+        + availableClients : List<string>
+        + Start() : void
+        + Dispose() : void
+        + SendMessage(target:string, message:string) : void
+        + RequestClientList() : void
+    }
+    ChatClient "client" <-- "<ChatRequest, ChatResponse>" INetworkClient
+    IChatClient <|-- ChatClient
+    ChatClient --> "messagesStore" IChatRequestStore
+    interface IChatClient {
+        + {abstract} Start() : void
+        + {abstract} Dispose() : void
+        + {abstract} SendMessage(target:string, message:string) : void
+        + {abstract} RequestClientList() : void
+    }
+    IChatClient --> "messagesStore" IChatRequestStore
+}
+class ChatRequestStore {
+    + ChatRequestStore(id:string)
+    + Store(transmission:ITransmission<ChatRequest, ChatResponse>?) : void
+    + requestTransmissions : Dictionary<string,Dictionary<string, ChatTransmission>>
+}
+IChatRequestStore <|-- ChatRequestStore
+interface IChatRequestStore {
+    + {abstract} Store(transmission:ITransmission<ChatRequest, ChatResponse>?) : void
+}
+class Program {
+    + {static} Main(args:string[]) : void
+    + {static} BuildAvaloniaApp() : AppBuilder
+}
+class ChatApp <<partial>> {
+    + <<override>> Initialize() : void
+    + StartupAction() : void
+    + <<override>> OnFrameworkInitializationCompleted() : void
+}
+Application <|-- ChatApp
+class ChatAppService {
+    + Client : IChatClient? <<get>> <<set>>
+    + Server : IChatServer? <<get>> <<set>>
+    + Name : string <<get>> <<set>> = "Chose your Name"
+    + RunOnTransmissionActions() : void
+    + RunOnStartupActions() : void
+    + Exit() : void
+}
+ChatAppService *-- IChatClient
+ChatAppService *-- IChatServer
+class StartupWindow <<partial>> {
+    + StartupWindow()
+    + InitializeComponent() : void
+}
+Window <|-- StartupWindow
+class ChatWindow <<partial>> {
+    + ChatWindow()
+    + InitializeComponent() : void
+}
+Window <|-- ChatWindow
+class ViewModelBase {
+}
+ReactiveObject <|-- ViewModelBase
+class ChatWindowViewModel {
+    + Name : string <<get>>
+    + Target : string? <<get>> <<set>>
+    + Message : string? <<get>> <<set>>
+    + Send() : void
+    + RefreshClientList() : void
+    + Exit() : void
+    + ChatWindowViewModel(service:ChatAppService)
+}
+ViewModelBase <|-- ChatWindowViewModel
+ChatWindowViewModel --> "services" ChatAppService
+class StartupWindowViewModel {
+    + IpAddress : string <<get>> <<set>>
+    + Port : string <<get>> <<set>>
+    + IsLaunchServer : bool <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Login() : void
+    + StartupWindowViewModel(service:ChatAppService)
+}
+ViewModelBase <|-- StartupWindowViewModel
+StartupWindowViewModel --> "services" ChatAppService
+@enduml
