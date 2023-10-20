@@ -9,15 +9,6 @@
     "csharp.debug.console": "integratedTerminal",
     "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.profiles.linux": {
-        "flatpak-spawn": {
-            "path": "/usr/bin/flatpak-spawn",
-            "icon": "terminal-bash",
-            "args": [
-                "--env=TERM=xterm-256color",
-                "--env=PATH=/app/bin:/usr/bin:/home/fritz/.dotnet/tools:/usr/lib/sdk/dotnet7/bin",
-                "bash"
-            ]
-        },
         "bash": {
             "path": "bash",
             "icon": "terminal-bash",
