@@ -139,3 +139,6 @@ test.db
 ChatAppTest/TestResults/**/*
 
 coveragereport/**/*
+
+# Plantuml files
+out/**/*

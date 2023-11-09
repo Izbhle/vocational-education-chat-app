@@ -1,0 +1,123 @@
+@startuml
+'skinparam linetype polyline
+'skinparam linetype ortho
+skinparam wrapWidth 500
+skinparam maxMessageSize 50
+
+' together {
+    class "NetworkServer"<Req,Res> {
+        + NetworkServer(ipAddress:string, portNumber:int)
+        + GetListOfClientIds() : List<string>
+        + GetClient(id:string?) : INetworkClient<Req, Res>?
+        + SendResponseToAllClients(response:Res) : void
+        + RegisterClientAction(client:INetworkClient<Req, Res>, id:string) : void
+        + DisconnectClientAction(id:string?) : void
+        + Start(transmissionHandlerServerFactory:Func<
+                    NetworkServer<Req, Res>,
+                    Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+                >) : void
+        + Dispose() : void
+    }
+    "NetworkServer" "<Req,Res>" -- "ITransmission"
+    NetworkServer "Dictionary<string,INetworkClient>" --> "clients" INetworkClient
+    "INetworkServer" "<Req,Res>" <|-- "NetworkServer"
+    interface "INetworkServer"<Req,Res> {
+        + {abstract} GetListOfClientIds() : List<string>
+        + {abstract} GetClient(id:string?) : INetworkClient<Req, Res>?
+        + {abstract} SendResponseToAllClients(response:Res) : void
+        + {abstract} RegisterClientAction(client:INetworkClient<Req, Res>, id:string) : void
+        + {abstract} DisconnectClientAction(id:string?) : void
+        + Start(transmissionHandlerServerFactory:Func<
+                    NetworkServer<Req, Res>,
+                    Func<INetworkClient<Req, Res>, Action<ITransmission<Req, Res>?>>
+                >) : void
+        + {abstract} Dispose() : void
+    }
+    "INetworkServer" "<Req,Res>" -- "ITransmission"
+    class ClientConnectionListener {
+        + Stop() : void
+        + ClientConnectionListener(tcpListener:TcpListener, registerAction:Action<TcpClient>)
+        + StartListening() : void
+    }
+' }
+
+' together {
+    class "NetworkClient"<Req,Res> {
+        + Id : string? <<get>> <<set>>
+        + NetworkClient(initialId:string, ipAddress:string, networkPort:int, serverRegisterRequest:Req, serverDisconnectRequest:Req)
+        + NetworkClient(client:TcpClient, streamCloseAction:Action<string?>)
+        + Start(transmissionHandlerFactory:Func<
+                    NetworkClient<Req, Res>,
+                    Action<ITransmission<Req, Res>?>
+                >) : void
+        + Dispose() : void
+        + TrySendTransmission(transmission:ITransmission<Req, Res>) : bool
+        + SendClientRequest(receiverId:string, request:Req) : ITransmission<Req, Res>?
+        + SendServerRequest(request:Req) : ITransmission<Req, Res>?
+        + SendResponse(oldTransmission:ITransmission<Req, Res>, response:Res) : ITransmission<Req, Res>?
+    }
+    "NetworkClient" "<Req,Res>" -- "ITransmission"
+    "INetworkClient" "<Req,Res>" <|-- "NetworkClient"
+    interface "INetworkClient"<Req,Res> {
+        + Id : string? <<get>> <<set>>
+        + Start(transmissionHandlerFactory:Func<
+                    NetworkClient<Req, Res>,
+                    Action<ITransmission<Req, Res>?>
+                >) : void
+        + {abstract} Dispose() : void
+        + {abstract} TrySendTransmission(transmission:ITransmission<Req, Res>) : bool
+        + {abstract} SendClientRequest(receiverId:string, request:Req) : ITransmission<Req, Res>?
+        + {abstract} SendServerRequest(request:Req) : ITransmission<Req, Res>?
+        + {abstract} SendResponse(oldTransmission:ITransmission<Req, Res>, response:Res) : ITransmission<Req, Res>?
+    }
+    "INetworkClient" "<Req,Res>" -- "ITransmission"
+    class "TransmissionReceiver"<Req,Res> {
+        + TransmissionReceiver(tcpStream:NetworkStream, transmissionAction:Action<ITransmission<Req, Res>?>)
+        + StartListening() : void
+        + Stop() : void
+    }
+    "TransmissionReceiver" "<Req,Res>" -- "ITransmission"
+' }
+    enum TransmissionType {
+        request,
+        response,
+    }
+    enum TargetType {
+        server,
+        client,
+    }
+together {
+    interface "ITransmission"<Req,Res> {
+    + transmissionType : TransmissionType? <<get>> <<set>>
+    + targetType : TargetType? <<get>> <<set>>
+    + receiverId : string? <<get>> <<set>>
+    + senderId : string? <<get>> <<set>>
+    + request : Req? <<get>> <<set>>
+    + response : Res? <<get>> <<set>>
+    }
+    ITransmission *-- TransmissionType
+    ITransmission *-- TargetType
+    class "TransmissionWrapper"<Req,Res> {
+        + jsonString : string
+        + data : ITransmission<Req, Res>?
+        + TransmissionWrapper(transmission:ITransmission<Req, Res>?)
+        + TransmissionWrapper(json:string)
+    }
+    class "Transmission"<Req,Res> {
+        + transmissionType : TransmissionType? <<get>> <<set>>
+        + targetType : TargetType? <<get>> <<set>>
+        + receiverId : string? <<get>> <<set>>
+        + senderId : string? <<get>> <<set>>
+        + request : Req? <<get>> <<set>>
+        + response : Res? <<get>> <<set>>
+    }
+    class "TransmissionWrapper"<Req,Res> {
+        + jsonString : string
+        + data : ITransmission<Req, Res>?
+        + TransmissionWrapper(transmission:ITransmission<Req, Res>?)
+        + TransmissionWrapper(json:string)
+    }
+    TransmissionWrapper *-- ITransmission
+    "ITransmission" "<Req,Res>" <|-- "Transmission"
+}
+@enduml
