@@ -6,10 +6,10 @@ namespace ChatAppClient
     public class ChatClient : IChatClient
     {
         private readonly INetworkClient<ChatRequest, ChatResponse> client;
-        public IChatRequestStore messagesStore { get; }
-        public List<string> availableClients { get; set; }
+        public IChatRequestStore MessagesStore { get; }
+        public List<string> AvailableClients { get; set; }
 
-        public Action callback { get; }
+        public Action Callback { get; }
 
         public static ChatClient CreateNew(string id, string ipAddress, int port, Action callback)
         {
@@ -34,10 +34,10 @@ namespace ChatAppClient
             Action updateCallback
         )
         {
-            availableClients = new List<string>();
-            callback = updateCallback;
+            AvailableClients = new List<string>();
+            Callback = updateCallback;
             client = networkClient;
-            messagesStore = new ChatRequestStore(id);
+            MessagesStore = new ChatRequestStore(id);
         }
 
         public void Start()
@@ -59,7 +59,7 @@ namespace ChatAppClient
                 message = message
             };
             var transmission = client.SendClientRequest(target, request);
-            messagesStore.Store(transmission);
+            MessagesStore.Store(transmission);
         }
 
         public void RequestClientList()

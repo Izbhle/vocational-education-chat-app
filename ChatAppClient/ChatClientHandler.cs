@@ -26,7 +26,7 @@ namespace ChatAppClient
                     switch (transmission.request.requestType)
                     {
                         case ChatRequestType.Message:
-                            chatClient.messagesStore.Store(transmission);
+                            chatClient.MessagesStore.Store(transmission);
                             client.SendResponse(
                                 transmission,
                                 new ChatResponse
@@ -46,7 +46,7 @@ namespace ChatAppClient
                     switch (transmission.response.requestType)
                     {
                         case ChatRequestType.Message:
-                            chatClient.messagesStore.Store(transmission);
+                            chatClient.MessagesStore.Store(transmission);
                             break;
                         case ChatRequestType.ClientList:
                             if (transmission.response.message == null)
@@ -58,14 +58,14 @@ namespace ChatAppClient
                                 );
                                 if (clients == null)
                                     break;
-                                chatClient.availableClients = clients;
+                                chatClient.AvailableClients = clients;
                             }
                             catch (JsonException) { }
                             break;
                     }
                     break;
             }
-            chatClient.callback();
+            chatClient.Callback();
         }
     }
 }

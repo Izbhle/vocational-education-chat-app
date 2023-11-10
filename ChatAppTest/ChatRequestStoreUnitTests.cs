@@ -37,20 +37,20 @@ public class ChatRequestStoreUnitTests
         string id = "B";
         var requestStoreMock = new Mock<ChatRequestStore>(id) { CallBase = true };
         requestStoreMock.Object.Store(messageFromAtoB);
-        Assert.IsTrue(requestStoreMock.Object.requestTransmissions.ContainsKey("A"));
+        Assert.IsTrue(requestStoreMock.Object.RequestTransmissions.ContainsKey("A"));
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["A"].ContainsKey(
+            requestStoreMock.Object.RequestTransmissions["A"].ContainsKey(
                 messageFromAtoB.request!.requestTimeId.ToString()!
             )
         );
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["A"][
+            requestStoreMock.Object.RequestTransmissions["A"][
                 messageFromAtoB.request!.requestTimeId.ToString()!
             ].request == messageFromAtoB.request
         );
         requestStoreMock.Object.Store(responseFromBtoA);
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["A"][
+            requestStoreMock.Object.RequestTransmissions["A"][
                 messageFromAtoB.request!.requestTimeId.ToString()!
             ].response == responseFromBtoA.response
         );
@@ -62,20 +62,20 @@ public class ChatRequestStoreUnitTests
         string id = "A";
         var requestStoreMock = new Mock<ChatRequestStore>(id) { CallBase = true };
         requestStoreMock.Object.Store(messageFromAtoB);
-        Assert.IsTrue(requestStoreMock.Object.requestTransmissions.ContainsKey("B"));
+        Assert.IsTrue(requestStoreMock.Object.RequestTransmissions.ContainsKey("B"));
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["B"].ContainsKey(
+            requestStoreMock.Object.RequestTransmissions["B"].ContainsKey(
                 messageFromAtoB.request!.requestTimeId.ToString()!
             )
         );
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["B"][
+            requestStoreMock.Object.RequestTransmissions["B"][
                 messageFromAtoB.request!.requestTimeId.ToString()!
             ].request == messageFromAtoB.request
         );
         requestStoreMock.Object.Store(responseFromBtoA);
         Assert.IsTrue(
-            requestStoreMock.Object.requestTransmissions["B"][
+            requestStoreMock.Object.RequestTransmissions["B"][
                 messageFromAtoB.request!.requestTimeId.ToString()!
             ].response == responseFromBtoA.response
         );

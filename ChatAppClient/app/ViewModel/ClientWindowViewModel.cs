@@ -11,7 +11,7 @@ namespace ViewModels
 
         public List<string> AvailableClients
         {
-            get { return chatAppModel.Client?.availableClients ?? new List<string>(); }
+            get { return chatAppModel.Client?.AvailableClients ?? new List<string>(); }
         }
 
         private string? _Target; // This is our backing field for Name
@@ -72,10 +72,10 @@ namespace ViewModels
                 }
                 if (
                     Target != null
-                    && chatAppModel.Client.messagesStore.requestTransmissions.ContainsKey(Target)
+                    && chatAppModel.Client.MessagesStore.RequestTransmissions.ContainsKey(Target)
                 )
                 {
-                    return chatAppModel.Client.messagesStore.requestTransmissions[
+                    return chatAppModel.Client.MessagesStore.RequestTransmissions[
                         Target
                     ].Values.ToList();
                 }

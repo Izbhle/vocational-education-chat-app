@@ -26,30 +26,30 @@ public class ChatIntegrationTests
         Thread.Sleep(100);
         // Check that ClientB receives and stores the message
         Assert.IsTrue(
-            clientB.messagesStore.requestTransmissions["A"].Values.First()!.senderId!.Equals("A")
+            clientB.MessagesStore.RequestTransmissions["A"].Values.First()!.senderId!.Equals("A")
         );
         Assert.IsTrue(
-            clientB.messagesStore.requestTransmissions["A"].Values.First()!.receiverId!.Equals("B")
+            clientB.MessagesStore.RequestTransmissions["A"].Values.First()!.receiverId!.Equals("B")
         );
         Assert.IsTrue(
-            clientB.messagesStore.requestTransmissions["A"].Values
+            clientB.MessagesStore.RequestTransmissions["A"].Values
                 .First()!
                 .request!.message!.Equals(message)
         );
         // Check that ClientA saves the send message and stores the response
         Assert.IsTrue(
-            clientA.messagesStore.requestTransmissions["B"].Values.First()!.senderId!.Equals("A")
+            clientA.MessagesStore.RequestTransmissions["B"].Values.First()!.senderId!.Equals("A")
         );
         Assert.IsTrue(
-            clientA.messagesStore.requestTransmissions["B"].Values.First()!.receiverId!.Equals("B")
+            clientA.MessagesStore.RequestTransmissions["B"].Values.First()!.receiverId!.Equals("B")
         );
         Assert.IsTrue(
-            clientA.messagesStore.requestTransmissions["B"].Values
+            clientA.MessagesStore.RequestTransmissions["B"].Values
                 .First()!
                 .request!.message!.Equals(message)
         );
         Assert.IsTrue(
-            clientA.messagesStore.requestTransmissions["B"].Values
+            clientA.MessagesStore.RequestTransmissions["B"].Values
                 .First()!
                 .response!.requestType!.Equals(ChatRequestType.Message)
         );
