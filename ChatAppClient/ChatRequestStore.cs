@@ -9,12 +9,12 @@ namespace ChatAppClient
         public Dictionary<
             string,
             Dictionary<string, ChatTransmission>
-        > requestTransmissions { get; }
+        > RequestTransmissions { get; }
 
         public ChatRequestStore(string id)
         {
             storeId = id;
-            requestTransmissions = new Dictionary<string, Dictionary<string, ChatTransmission>>();
+            RequestTransmissions = new Dictionary<string, Dictionary<string, ChatTransmission>>();
         }
 
         private Dictionary<string, ChatTransmission> GetTargetTransmissionDict(
@@ -31,11 +31,11 @@ namespace ChatAppClient
             {
                 targetId = senderId;
             }
-            if (!requestTransmissions.ContainsKey(targetId))
+            if (!RequestTransmissions.ContainsKey(targetId))
             {
-                requestTransmissions.Add(targetId, new Dictionary<string, ChatTransmission>());
+                RequestTransmissions.Add(targetId, new Dictionary<string, ChatTransmission>());
             }
-            return requestTransmissions[targetId];
+            return RequestTransmissions[targetId];
         }
 
         public void Store(ITransmission<ChatRequest, ChatResponse>? transmission)

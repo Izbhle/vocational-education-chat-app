@@ -9,9 +9,11 @@ namespace ViewModels
         public string Name { get; }
         private readonly ChatAppModel chatAppModel;
 
+        public string LogMessage { get; set; }
+        public string LogStyle { get; set; }
         public List<string> AvailableClients
         {
-            get { return chatAppModel.Client?.availableClients ?? new List<string>(); }
+            get { return chatAppModel.Client?.AvailableClients ?? new List<string>(); }
         }
 
         private string? _Target; // This is our backing field for Name
@@ -72,10 +74,10 @@ namespace ViewModels
                 }
                 if (
                     Target != null
-                    && chatAppModel.Client.messagesStore.requestTransmissions.ContainsKey(Target)
+                    && chatAppModel.Client.MessagesStore.RequestTransmissions.ContainsKey(Target)
                 )
                 {
-                    return chatAppModel.Client.messagesStore.requestTransmissions[
+                    return chatAppModel.Client.MessagesStore.RequestTransmissions[
                         Target
                     ].Values.ToList();
                 }
@@ -96,6 +98,28 @@ namespace ViewModels
             chatAppModel.OnTransmissionCallback += () =>
                 this.RaisePropertyChanged(nameof(AvailableClients));
             Name = model.Name;
+            LogMessage = "";
+            LogStyle = "black";
+            chatAppModel.OnLogCallback += (ChatLogType type, string message) =>
+            {
+                switch (type)
+                {
+                    case ChatLogType.info:
+                        LogStyle = "black";
+                        LogMessage = message;
+                        break;
+                    case ChatLogType.warning:
+                        LogStyle = "orange";
+                        LogMessage = $"warning: {message}";
+                        break;
+                    case ChatLogType.error:
+                        LogStyle = "red";
+                        LogMessage = $"error: {message}";
+                        break;
+                }
+                this.RaisePropertyChanged(nameof(LogMessage));
+                this.RaisePropertyChanged(nameof(LogStyle));
+            };
         }
     }
 }

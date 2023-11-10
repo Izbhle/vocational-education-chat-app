@@ -28,7 +28,9 @@ namespace ViewModels
                 Name,
                 IpAddress,
                 1234,
-                () => chatAppModel.OnTransmissionCallback?.Invoke()
+                () => chatAppModel.OnTransmissionCallback?.Invoke(),
+                (ChatLogType type, string message) =>
+                    chatAppModel.OnLogCallback?.Invoke(type, message)
             );
             chatAppModel.Client.Start();
             chatAppModel.OnStartupCallback?.Invoke();

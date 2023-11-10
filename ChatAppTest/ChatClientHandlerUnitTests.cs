@@ -10,12 +10,14 @@ public class ChatClientHandlerUnitTests
     private readonly Mock<IChatClient> chatClientMock = new();
     private readonly Mock<IChatRequestStore> messagesStoreMock = new();
     private readonly Mock<Action> callbackMock = new();
+    private readonly Mock<Action<ChatLogType, string>> logCallbackMock = new();
 
     public ChatClientHandlerUnitTests()
     {
-        chatClientMock.SetupGet(c => c.messagesStore).Returns(messagesStoreMock.Object);
-        chatClientMock.SetupGet(c => c.callback).Returns(callbackMock.Object);
-        chatClientMock.SetupProperty(c => c.availableClients);
+        chatClientMock.SetupGet(c => c.MessagesStore).Returns(messagesStoreMock.Object);
+        chatClientMock.SetupGet(c => c.Callback).Returns(callbackMock.Object);
+        chatClientMock.SetupGet(c => c.LogCallback).Returns(logCallbackMock.Object);
+        chatClientMock.SetupProperty(c => c.AvailableClients);
     }
 
     [TestMethod]
@@ -95,8 +97,8 @@ public class ChatClientHandlerUnitTests
             clientMock.Object,
             transmission
         );
-        Assert.IsTrue(chatClientMock.Object.availableClients.Contains("test"));
-        Assert.IsTrue(chatClientMock.Object.availableClients.Contains("other"));
+        Assert.IsTrue(chatClientMock.Object.AvailableClients.Contains("test"));
+        Assert.IsTrue(chatClientMock.Object.AvailableClients.Contains("other"));
         callbackMock.Verify(c => c());
     }
 }

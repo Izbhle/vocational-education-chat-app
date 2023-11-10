@@ -12,7 +12,12 @@ public class ChatClientUnitTests
     public void SendsRequestClientListRequest()
     {
         string id = "test";
-        var chatClientMock = new Mock<ChatClient>(id, networkClientMock.Object, () => { })
+        var chatClientMock = new Mock<ChatClient>(
+            id,
+            networkClientMock.Object,
+            () => { },
+            (ChatLogType type, string message) => { }
+        )
         {
             CallBase = true
         };
@@ -29,7 +34,12 @@ public class ChatClientUnitTests
         string id = "test";
         string target = "target";
         string message = "message";
-        var chatClientMock = new Mock<ChatClient>(id, networkClientMock.Object, () => { })
+        var chatClientMock = new Mock<ChatClient>(
+            id,
+            networkClientMock.Object,
+            () => { },
+            (ChatLogType type, string message) => { }
+        )
         {
             CallBase = true
         };

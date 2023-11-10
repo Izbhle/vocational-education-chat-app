@@ -128,7 +128,7 @@
 					VerticalAlignment="Stretch"
 					Margin="15"
 				>
-					<TextBlock>Errors</TextBlock>
+					<TextBlock Text="{Binding LogMessage}" Foreground="{Binding LogStyle}"/>
 					<TextBox
 						Background="White"
 						Text="{Binding Message}"

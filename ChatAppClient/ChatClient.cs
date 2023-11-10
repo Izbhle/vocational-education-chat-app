@@ -6,12 +6,18 @@ namespace ChatAppClient
     public class ChatClient : IChatClient
     {
         private readonly INetworkClient<ChatRequest, ChatResponse> client;
-        public IChatRequestStore messagesStore { get; }
-        public List<string> availableClients { get; set; }
+        public IChatRequestStore MessagesStore { get; }
+        public List<string> AvailableClients { get; set; }
+        public Action Callback { get; }
+        public Action<ChatLogType, string> LogCallback { get; }
 
-        public Action callback { get; }
-
-        public static ChatClient CreateNew(string id, string ipAddress, int port, Action callback)
+        public static ChatClient CreateNew(
+            string id,
+            string ipAddress,
+            int port,
+            Action callback,
+            Action<ChatLogType, string> logCallback
+        )
         {
             var registerRequest = new ChatRequest
             {
@@ -25,19 +31,21 @@ namespace ChatAppClient
                 registerRequest,
                 ChatClientTransmissions.disconnectRequest
             );
-            return new ChatClient(id, client, callback);
+            return new ChatClient(id, client, callback, logCallback);
         }
 
         public ChatClient(
             string id,
             INetworkClient<ChatRequest, ChatResponse> networkClient,
-            Action updateCallback
+            Action updateCallback,
+            Action<ChatLogType, string> logCallback
         )
         {
-            availableClients = new List<string>();
-            callback = updateCallback;
+            AvailableClients = new List<string>();
+            Callback = updateCallback;
+            LogCallback = logCallback;
             client = networkClient;
-            messagesStore = new ChatRequestStore(id);
+            MessagesStore = new ChatRequestStore(id);
         }
 
         public void Start()
@@ -59,7 +67,7 @@ namespace ChatAppClient
                 message = message
             };
             var transmission = client.SendClientRequest(target, request);
-            messagesStore.Store(transmission);
+            MessagesStore.Store(transmission);
         }
 
         public void RequestClientList()
