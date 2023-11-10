@@ -67,8 +67,12 @@ namespace ChatAppServer
                                         );
                                         break;
                                     case ChatRequestType.DisconnectClient:
-                                        server.DisconnectClientAction(client.Id);
                                         client.Dispose();
+                                        Thread.Sleep(200);
+                                        server.DisconnectClientAction(client.Id);
+                                        server.SendResponseToAllClients(
+                                            chatServer.CreateListOfClientsResponse()
+                                        );
                                         break;
                                     case ChatRequestType.ClientList:
                                         client.SendResponse(
