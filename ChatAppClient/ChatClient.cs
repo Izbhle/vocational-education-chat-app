@@ -8,10 +8,16 @@ namespace ChatAppClient
         private readonly INetworkClient<ChatRequest, ChatResponse> client;
         public IChatRequestStore MessagesStore { get; }
         public List<string> AvailableClients { get; set; }
-
         public Action Callback { get; }
+        public Action<ChatLogType, string> LogCallback { get; }
 
-        public static ChatClient CreateNew(string id, string ipAddress, int port, Action callback)
+        public static ChatClient CreateNew(
+            string id,
+            string ipAddress,
+            int port,
+            Action callback,
+            Action<ChatLogType, string> logCallback
+        )
         {
             var registerRequest = new ChatRequest
             {
@@ -25,17 +31,19 @@ namespace ChatAppClient
                 registerRequest,
                 ChatClientTransmissions.disconnectRequest
             );
-            return new ChatClient(id, client, callback);
+            return new ChatClient(id, client, callback, logCallback);
         }
 
         public ChatClient(
             string id,
             INetworkClient<ChatRequest, ChatResponse> networkClient,
-            Action updateCallback
+            Action updateCallback,
+            Action<ChatLogType, string> logCallback
         )
         {
             AvailableClients = new List<string>();
             Callback = updateCallback;
+            LogCallback = logCallback;
             client = networkClient;
             MessagesStore = new ChatRequestStore(id);
         }

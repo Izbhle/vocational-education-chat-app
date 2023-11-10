@@ -16,10 +16,22 @@ public class ChatIntegrationTests
         var server = ChatServer.CreateNew(ip, port);
         server.Start();
         Thread.Sleep(100);
-        var clientA = ChatClient.CreateNew("A", ip, port, () => { });
+        var clientA = ChatClient.CreateNew(
+            "A",
+            ip,
+            port,
+            () => { },
+            (ChatLogType type, string message) => { }
+        );
         clientA.Start();
         Thread.Sleep(100);
-        var clientB = ChatClient.CreateNew("B", ip, port, () => { });
+        var clientB = ChatClient.CreateNew(
+            "B",
+            ip,
+            port,
+            () => { },
+            (ChatLogType type, string message) => { }
+        );
         clientB.Start();
         Thread.Sleep(100);
         clientA.SendMessage("B", message);

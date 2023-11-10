@@ -4,6 +4,7 @@ namespace ChatAppClient
     {
         public IChatRequestStore MessagesStore { get; }
         public Action Callback { get; }
+        public Action<ChatLogType, string> LogCallback { get; }
         public List<string> AvailableClients { get; set; }
         public abstract void Start();
         public abstract void Dispose();
