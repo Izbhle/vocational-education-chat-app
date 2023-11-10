@@ -7,11 +7,11 @@ namespace ViewModels
     public class ChatWindowViewModel : ViewModelBase
     {
         public string Name { get; }
-        public readonly ChatAppService services;
+        private readonly ChatAppModel chatAppModel;
 
         public List<string> AvailableClients
         {
-            get { return services.Client?.availableClients ?? new List<string>(); }
+            get { return chatAppModel.Client?.availableClients ?? new List<string>(); }
         }
 
         private string? _Target; // This is our backing field for Name
@@ -40,7 +40,7 @@ namespace ViewModels
 
         public void Send()
         {
-            if (services.Client == null)
+            if (chatAppModel.Client == null)
             {
                 return;
             }
@@ -48,34 +48,34 @@ namespace ViewModels
             {
                 if (!string.IsNullOrEmpty(Target) && !string.IsNullOrEmpty(Message))
                 {
-                    services.Client.SendMessage(Target, Message);
+                    chatAppModel.Client.SendMessage(Target, Message);
                 }
             }
         }
 
         public void RefreshClientList()
         {
-            if (services.Client == null)
+            if (chatAppModel.Client == null)
             {
                 return;
             }
-            services.Client.RequestClientList();
+            chatAppModel.Client.RequestClientList();
         }
 
         public List<ChatTransmission> Messages
         {
             get
             {
-                if (services.Client == null)
+                if (chatAppModel.Client == null)
                 {
                     return new List<ChatTransmission>();
                 }
                 if (
                     Target != null
-                    && services.Client.messagesStore.requestTransmissions.ContainsKey(Target)
+                    && chatAppModel.Client.messagesStore.requestTransmissions.ContainsKey(Target)
                 )
                 {
-                    return services.Client.messagesStore.requestTransmissions[
+                    return chatAppModel.Client.messagesStore.requestTransmissions[
                         Target
                     ].Values.ToList();
                 }
@@ -85,17 +85,17 @@ namespace ViewModels
 
         public void Exit()
         {
-            services.Exit();
+            chatAppModel.OnExitCallback?.Invoke();
         }
 
-        public ChatWindowViewModel(ChatAppService service)
+        public ChatWindowViewModel(ChatAppModel model)
         {
-            services = service;
-            services.OnTransmissionActions.Add(() => this.RaisePropertyChanged(nameof(Messages)));
-            services.OnTransmissionActions.Add(
-                () => this.RaisePropertyChanged(nameof(AvailableClients))
-            );
-            Name = service.Name;
+            chatAppModel = model;
+            chatAppModel.OnTransmissionCallback += () =>
+                this.RaisePropertyChanged(nameof(Messages));
+            chatAppModel.OnTransmissionCallback += () =>
+                this.RaisePropertyChanged(nameof(AvailableClients));
+            Name = model.Name;
         }
     }
 }

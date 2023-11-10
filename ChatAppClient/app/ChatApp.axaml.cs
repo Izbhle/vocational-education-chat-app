@@ -15,42 +15,34 @@ namespace ChatAppClient
 
         public void StartupAction()
         {
-            if (
-                ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
-                && chatAppService != null
-            )
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                chatAppService.OnExitActions.Add(() =>
-                {
-                    desktop.Exit -= OnExit;
-                    desktop.MainWindow?.Close();
-                });
                 var loginWindow = desktop.MainWindow;
                 desktop.MainWindow = new ChatWindow
                 {
-                    DataContext = new ChatWindowViewModel(chatAppService),
+                    DataContext = new ChatWindowViewModel(chatAppModel),
                 };
+                chatAppModel.OnExitCallback += desktop.MainWindow.Close;
                 loginWindow?.Close();
             }
         }
 
         private void OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
         {
-            chatAppService?.Exit();
+            chatAppModel?.Dispose();
         }
 
-        private ChatAppService? chatAppService;
+        private readonly ChatAppModel chatAppModel = new();
 
         public override void OnFrameworkInitializationCompleted()
         {
-            chatAppService = new ChatAppService();
-            chatAppService.OnStartupActions.Add(StartupAction);
+            chatAppModel.OnStartupCallback += StartupAction;
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.Exit += OnExit;
                 desktop.MainWindow = new StartupWindow
                 {
-                    DataContext = new StartupWindowViewModel(chatAppService),
+                    DataContext = new StartupWindowViewModel(chatAppModel),
                 };
             }
 

@@ -9,7 +9,7 @@ namespace ViewModels
         public string Port { get; set; }
         public bool IsLaunchServer { get; set; }
         public string Name { get; set; }
-        public readonly ChatAppService services;
+        private readonly ChatAppModel chatAppModel;
 
         public void Login()
         {
@@ -19,28 +19,28 @@ namespace ViewModels
             }
             if (IsLaunchServer)
             {
-                services.Server = ChatServer.CreateNew(IpAddress, 1234);
-                services.Server.Start();
+                chatAppModel.Server = ChatServer.CreateNew(IpAddress, 1234);
+                chatAppModel.Server.Start();
             }
-            services.Name = Name;
-            Thread.Sleep(1000);
-            services.Client = ChatClient.CreateNew(
+            chatAppModel.Name = Name;
+            Thread.Sleep(200);
+            chatAppModel.Client = ChatClient.CreateNew(
                 Name,
                 IpAddress,
                 1234,
-                services.RunOnTransmissionActions
+                () => chatAppModel.OnTransmissionCallback?.Invoke()
             );
-            services.Client.Start();
-            services.RunOnStartupActions();
+            chatAppModel.Client.Start();
+            chatAppModel.OnStartupCallback?.Invoke();
         }
 
-        public StartupWindowViewModel(ChatAppService service)
+        public StartupWindowViewModel(ChatAppModel model)
         {
             IpAddress = "127.0.0.1";
             Port = "1234";
-            Name = service.Name;
+            Name = model.Name;
             IsLaunchServer = false;
-            services = service;
+            chatAppModel = model;
         }
     }
 }
